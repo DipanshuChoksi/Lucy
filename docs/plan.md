@@ -9,7 +9,7 @@
 
 ## Phase 2: Core Sandbox & Agent Framework
 - [ ] Task 2.1: Configure Telegram Webhook endpoint in Express.
-- [ ] Task 2.2: Implement LLM gateway (Gemini/OpenAI wrapper) for system prompts.
+- [x] Task 2.2: Implement LLM gateway (Gemini/OpenAI wrapper) for system prompts.
 - [ ] Task 2.3: Set up isolated, read-only PostgreSQL role for the SQL Sandbox.
 - [ ] Task 2.4: Implement SQL Sandbox execution logic (parsing `EXPLAIN ANALYZE`).
 - [ ] Task 2.5: Implement DSA Coach Socratic prompt logic and context management.
