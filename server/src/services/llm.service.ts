@@ -23,7 +23,7 @@ export class LLMService {
    */
   public async generateContent(systemInstruction: string, userPrompt: string): Promise<string> {
     const model = this.genAI.getGenerativeModel({
-      model: 'gemini-2.5-flash',
+      model: 'gemini-2.5-flash-lite',
       systemInstruction,
     });
 
@@ -44,7 +44,7 @@ export class LLMService {
    */
   public startChat(systemInstruction: string): ChatSession {
     const model = this.genAI.getGenerativeModel({
-      model: 'gemini-2.5-flash',
+      model: 'gemini-2.5-flash-lite',
       systemInstruction,
     });
 

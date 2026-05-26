@@ -11,9 +11,10 @@ export class GitHubService {
     content: string
   ): Promise<void> {
     // We store all notes in a specific folder called "Lucy-Notes"
-    const path = `Lucy-Notes/${filename}`;
-    const url = `https://api.github.com/repos/${repo}/contents/${path}`;
+    const path = `${filename}`;
 
+    const url = `https://api.github.com/repos/${repo}/contents/${path}`;
+    console.log(url)
     // Base64 encode the content for the GitHub API
     const base64Content = Buffer.from(content, 'utf-8').toString('base64');
 

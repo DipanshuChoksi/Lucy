@@ -22,7 +22,7 @@
 - [ ] Task 3.5: Integrate GitHub Issues API to search "good first issues" by tech stack.
 
 ## Phase 4: Polish
-- [ ] Task 4.1: Add web UI for managing GitHub token, Obsidian repository, and tech stack.
+- [x] Task 4.1: Add web UI for managing GitHub token, Obsidian repository, and tech stack.
 - [ ] Task 4.2: Implement robust error handling for LLM timeouts or GitHub API limits.
 - [ ] Task 4.3: Refine system prompts for all 4 agents based on initial testing.
 - [ ] Task 4.4: Add Telegram sender ID validation (Authentication).
