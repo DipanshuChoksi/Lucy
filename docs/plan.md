@@ -17,7 +17,7 @@
 ## Phase 3: Integration (Content & OS Scout)
 - [x] Task 3.1: Implement YouTube transcript fetching and text extraction.
 - [x] Task 3.2: Implement prompt logic for summarizing and creating flashcards.
-- [ ] Task 3.3: Integrate GitHub API to push markdown files to the Obsidian repository.
+- [x] Task 3.3: Integrate GitHub API to push markdown files to the Obsidian repository.
 - [ ] Task 3.4: Set up CRON job for the Open-Source Scout.
 - [ ] Task 3.5: Integrate GitHub Issues API to search "good first issues" by tech stack.
 
