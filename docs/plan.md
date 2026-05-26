@@ -12,7 +12,7 @@
 - [x] Task 2.2: Implement LLM gateway (Gemini/OpenAI wrapper) for system prompts.
 - [ ] Task 2.3: Set up isolated, read-only PostgreSQL role for the SQL Sandbox.
 - [ ] Task 2.4: Implement SQL Sandbox execution logic (parsing `EXPLAIN ANALYZE`).
-- [ ] Task 2.5: Implement DSA Coach Socratic prompt logic and context management.
+- [x] Task 2.5: Implement DSA Coach Socratic prompt logic and context management.
 
 ## Phase 3: Integration (Content & OS Scout)
 - [ ] Task 3.1: Implement YouTube transcript fetching and text extraction.

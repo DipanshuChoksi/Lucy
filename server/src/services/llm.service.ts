@@ -1,4 +1,4 @@
-import { GoogleGenerativeAI } from '@google/generative-ai';
+import { GoogleGenerativeAI, ChatSession } from '@google/generative-ai';
 
 export class LLMService {
   private readonly genAI: GoogleGenerativeAI;
@@ -35,6 +35,20 @@ export class LLMService {
       console.error('Error generating content from LLM:', error);
       throw new Error('Failed to generate content from LLM gateway.');
     }
+  }
+
+  /**
+   * Initializes a stateful chat session with the given system instruction.
+   * @param systemInstruction The system prompt / context to guide the LLM behavior.
+   * @returns A ChatSession object that can be used to send messages and maintain history.
+   */
+  public startChat(systemInstruction: string): ChatSession {
+    const model = this.genAI.getGenerativeModel({
+      model: 'gemini-2.5-flash',
+      systemInstruction,
+    });
+
+    return model.startChat();
   }
 }
 
