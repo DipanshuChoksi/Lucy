@@ -8,14 +8,14 @@ export class YouTubeController {
   async processVideo(req: Request, res: Response) {
     try {
       const { youtubeLink } = req.body;
-      const telegramId = 'web-user';
+      const email = 'web-user@example.com'; // using a dummy ema  il instead of dummy telegramId
 
       if (!youtubeLink) {
         return res.status(400).json({ error: 'youtubeLink is required' });
       }
 
       // 1. Fetch user settings to get Obsidian repository info
-      const userSettings = await settingsService.getSettings(telegramId);
+      const userSettings = await settingsService.getSettings(email);
       if (!userSettings || !userSettings.obsidianRepo) {
         return res.status(400).json({
           error: 'Obsidian repository is not configured. Please set it up in the settings first.'

@@ -8,11 +8,12 @@ export const SettingsForm: React.FC = () => {
   const [isSaving, setIsSaving] = useState(false);
   const [saveSuccess, setSaveSuccess] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
+  const [successMessage, setSuccessMessage] = useState('');
 
   useEffect(() => {
     const fetchSettings = async () => {
       try {
-        const response = await fetch('/api/settings?telegramId=web-user');
+        const response = await fetch('/api/settings?email=web-user@example.com');
         if (response.ok) {
           const data = await response.json();
           if (data && data.obsidianRepo) {
@@ -31,6 +32,8 @@ export const SettingsForm: React.FC = () => {
     setIsSaving(true);
     setSaveSuccess(false);
     setErrorMessage('');
+    setSuccessMessage('');
+    console.log("hello world");
 
     try {
       const response = await fetch('/api/settings', {
@@ -39,7 +42,7 @@ export const SettingsForm: React.FC = () => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          telegramId: 'web-user',
+          email: 'web-user@example.com',
           obsidianRepo,
         }),
       });
@@ -50,7 +53,11 @@ export const SettingsForm: React.FC = () => {
 
       setIsSaving(false);
       setSaveSuccess(true);
-      setTimeout(() => setSaveSuccess(false), 3000);
+      setSuccessMessage('Settings updated successfully!');
+      setTimeout(() => {
+        setSaveSuccess(false);
+        setSuccessMessage('');
+      }, 5000);
     } catch (error: any) {
       console.error('Error saving settings:', error);
       setErrorMessage(error.message || 'Error saving settings');
@@ -59,7 +66,7 @@ export const SettingsForm: React.FC = () => {
   };
 
   return (
-    <form onSubmit={handleSave} className="flex flex-col gap-6">
+    <div className="flex flex-col gap-6">
 
 
       <div className="flex flex-col gap-2">
@@ -72,17 +79,24 @@ export const SettingsForm: React.FC = () => {
           type="text" 
           value={obsidianRepo}
           onChange={(e) => setObsidianRepo(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') handleSave(e as any);
+          }}
           className="min-h-[44px] border border-border-main rounded-md px-3 py-2 bg-bg-surface text-text-main outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-colors"
           placeholder="username/my-obsidian-vault"
         />
         {errorMessage && (
           <p className="text-sm text-red-500 mt-1" role="alert">{errorMessage}</p>
         )}
+        {successMessage && (
+          <p className="text-sm text-green-500 mt-1" role="status">{successMessage}</p>
+        )}
       </div>
 
       <button 
-        type="submit" 
+        type="button" 
         disabled={isSaving}
+        onClick={handleSave as any}
         className={`mt-6 flex items-center justify-center gap-2 text-bg-surface font-bold py-3 px-4 rounded-md cursor-pointer transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary disabled:cursor-not-allowed ${
           saveSuccess ? 'bg-green-600 hover:bg-green-700' : 'bg-cta hover:bg-cta-hover disabled:opacity-80'
         }`}
@@ -96,6 +110,6 @@ export const SettingsForm: React.FC = () => {
         )}
         {isSaving ? 'Saving...' : saveSuccess ? 'Saved!' : 'Save Settings'}
       </button>
-    </form>
+    </div>
   );
 };

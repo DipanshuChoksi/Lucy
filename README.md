@@ -1,27 +1,19 @@
 # Developer Assistant Platform
 
-A multi-agent development assistant accessible via mobile messaging (Telegram/WhatsApp) and an accompanying Next.js web application. This platform provides intelligent, asynchronous tools to accelerate developer learning, coding practice, and open-source contributions.
+A multi-agent development assistant with accompanying Next.js web application. This platform provides intelligent, asynchronous tools to accelerate developer learning.
 
-## 🌟 Core Agents
+## Core Agent
 
-1. **The DSA Coach (Socratic Mentor)**
-   Analyzes your LeetCode problem or code snippet via messaging. Instead of giving you the direct solution, it provides Socratic, step-by-step hints to help you reach the optimal time/space complexity yourself.
-
-2. **The YouTube & Article Ingestor (Active Recall)**
+> **The YouTube & Article Ingestor (Active Recall)**
    Send a YouTube link or technical article to the bot. It fetches the transcript/content, extracts key architectural patterns, writes structured markdown notes with flashcards, and automatically pushes them to your Obsidian vault repository.
 
-3. **The Open-Source Scout**
-   Periodically searches GitHub for "good first issues" matching your current tech stack (e.g., TypeScript, Go, React) and sends you summaries along with a high-level suggested approach.
-
-4. **The SQL/Data Engineering Sandbox**
-   Write SQL queries directly on your mobile device. The agent runs them against a sandboxed PostgreSQL instance, returns the `EXPLAIN ANALYZE` query plan, and explains any performance bottlenecks.
 
 ## 🏗 Architecture & Tech Stack
 
 - **Frontend:** Next.js (React), Tailwind CSS, TypeScript
 - **Backend:** Node.js, Express, TypeScript
 - **Database:** PostgreSQL (with Prisma ORM)
-- **Integrations:** Telegram/WhatsApp APIs, GitHub API, LLM API (Gemini/OpenAI)
+- **Integrations:** GitHub API, LLM API (Gemini)
 
 ### Project Structure
 
@@ -42,13 +34,12 @@ lucy/
 └── docs/                 # PRD, TDD, and Implementation plans
 ```
 
-## 🚀 Getting Started
+## Getting Started
 
 ### Prerequisites
 - Node.js (v18+)
 - PostgreSQL instance running locally or via Docker
-- A Telegram Bot Token
-- A GitHub Personal Access Token (for Obsidian sync and OS Scout)
+- A GitHub Personal Access Token (for Obsidian sync)
 
 ### Backend Setup
 1. Navigate to the backend directory:

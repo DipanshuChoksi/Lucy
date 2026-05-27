@@ -4,12 +4,12 @@ import { settingsService } from '../services/settings.service';
 export class SettingsController {
   async getSettings(req: Request, res: Response) {
     try {
-      const telegramId = req.query.telegramId as string;
-      if (!telegramId) {
-        return res.status(400).json({ error: 'telegramId is required' });
+      const email = req.query.email as string;
+      if (!email) {
+        return res.status(400).json({ error: 'email is required' });
       }
 
-      const user = await settingsService.getSettings(telegramId);
+      const user = await settingsService.getSettings(email);
       if (!user) {
         return res.status(404).json({ error: 'User not found' });
       }
@@ -23,16 +23,15 @@ export class SettingsController {
 
   async updateSettings(req: Request, res: Response) {
     try {
-      let { telegramId, githubToken, obsidianRepo, techStack } = req.body;
-      if (!telegramId) {
-        return res.status(400).json({ error: 'telegramId is required' });
+      let { email, githubToken, obsidianRepo } = req.body;
+      if (!email) {
+        return res.status(400).json({ error: 'email is required' });
       }
-      telegramId = String(telegramId);
+      email = String(email);
 
-      const user = await settingsService.updateSettings(telegramId, {
+      const user = await settingsService.updateSettings(email, {
         githubToken,
         obsidianRepo,
-        techStack,
       });
 
       return res.json(user);

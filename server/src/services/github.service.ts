@@ -22,6 +22,21 @@ export class GitHubService {
     const timeoutId = setTimeout(() => controller.abort(), 15000); // 15 seconds timeout
 
     try {
+      // First, try to get the file to check if it exists and get its sha
+      let sha: string | undefined;
+      const getResponse = await fetch(url, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${process.env.GITHUB_PERSONAL_ACCESS_TOKEN}`,
+          'Accept': 'application/vnd.github.v3+json',
+        },
+      });
+
+      if (getResponse.ok) {
+        const fileData = await getResponse.json();
+        sha = fileData.sha;
+      }
+
       const response = await fetch(url, {
         method: 'PUT',
         headers: {
@@ -30,8 +45,9 @@ export class GitHubService {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          message: `Add ${filename} via Lucy Assistant`,
+          message: `Add/Update ${filename} via Lucy Assistant`,
           content: base64Content,
+          ...(sha && { sha }), // Include sha if the file exists
         }),
         signal: controller.signal,
       });
@@ -51,6 +67,12 @@ export class GitHubService {
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
         console.error('GitHub API Error:', errorData);
+        if (response.status === 404) {
+          throw new Error(`GitHub repository not found or no access. Please check the repository name in your settings and ensure your token has access.`);
+        }
+        if (response.status === 401) {
+          throw new Error(`GitHub token is invalid or expired. Please check your GitHub token in settings.`);
+        }
         throw new Error(`Failed to push to GitHub: ${response.status} ${response.statusText}`);
       }
     } catch (error) {

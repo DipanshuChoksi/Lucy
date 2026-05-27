@@ -7,22 +7,22 @@ export interface UpdateSettingsDto {
 }
 
 export class SettingsService {
-  async getSettings(telegramId: string) {
+  async getSettings(email: string) {
     return prisma.user.findUnique({
-      where: { telegramId },
+      where: { email },
     });
   }
 
-  async updateSettings(telegramId: string, data: UpdateSettingsDto) {
+  async updateSettings(email: string, data: UpdateSettingsDto) {
     return prisma.user.upsert({
-      where: { telegramId },
+      where: { email },
       update: {
         githubToken: data.githubToken,
         obsidianRepo: data.obsidianRepo,
         techStack: data.techStack,
       },
       create: {
-        telegramId,
+        email,
         githubToken: data.githubToken,
         obsidianRepo: data.obsidianRepo,
         techStack: data.techStack,

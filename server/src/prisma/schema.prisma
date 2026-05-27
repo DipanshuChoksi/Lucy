@@ -8,10 +8,9 @@ datasource db {
 
 model User {
   id            Int      @id @default(autoincrement())
-  telegramId    String   @unique
+  email    String   @unique
   githubToken   String?
   obsidianRepo  String?
-  techStack     String?
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 }

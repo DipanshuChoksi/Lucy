@@ -3,7 +3,7 @@ import './globals.css';
 
 export const metadata = {
   title: 'Developer Assistant Platform',
-  description: 'Manage your Socratic DSA Coach and OS Scout.',
+  description: 'Your personal knowledge triage.',
 };
 
 export default function RootLayout({

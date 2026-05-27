@@ -8,27 +8,20 @@
 - [ ] Task 1.5: Set up basic `GET /api/settings` and `PATCH /api/settings` in the backend.
 
 ## Phase 2: Core Sandbox & Agent Framework
-- [ ] Task 2.1: Configure Telegram Webhook endpoint in Express.
-- [x] Task 2.2: Implement LLM gateway (Gemini/OpenAI wrapper) for system prompts.
-- [ ] Task 2.3: Set up isolated, read-only PostgreSQL role for the SQL Sandbox.
-- [ ] Task 2.4: Implement SQL Sandbox execution logic (parsing `EXPLAIN ANALYZE`).
-- [x] Task 2.5: Implement DSA Coach Socratic prompt logic and context management.
+- [x] Task 2.1: Implement LLM gateway (Gemini/OpenAI wrapper) for system prompts.
 
-## Phase 3: Integration (Content & OS Scout)
+## Phase 3: Integration (Content)
 - [x] Task 3.1: Implement YouTube transcript fetching and text extraction.
 - [x] Task 3.2: Implement prompt logic for summarizing and creating flashcards.
 - [x] Task 3.3: Integrate GitHub API to push markdown files to the Obsidian repository.
-- [ ] Task 3.4: Set up CRON job for the Open-Source Scout.
-- [ ] Task 3.5: Integrate GitHub Issues API to search "good first issues" by tech stack.
 
 ## Phase 4: Polish
 - [x] Task 4.1: Add web UI for managing GitHub token, Obsidian repository, and tech stack.
 - [x] Task 4.2: Implement robust error handling for LLM timeouts or GitHub API limits.
 - [ ] Task 4.3: Refine system prompts for all 4 agents based on initial testing.
-- [ ] Task 4.4: Add Telegram sender ID validation (Authentication).
+- [ ] Task 4.4: Add Email authentication.
 
 ## Phase 5: Launch
 - [ ] Task 5.1: Write environment setup and deployment README. 
 - [ ] Task 5.2: Deploy frontend to Vercel.
 - [ ] Task 5.3: Deploy backend and PostgreSQL to Render/Railway.
-- [ ] Task 5.4: Connect Telegram bot production webhook to the deployed backend.
