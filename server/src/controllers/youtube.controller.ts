@@ -24,7 +24,6 @@ export class YouTubeController {
 
       // 2. Extract video ID for naming the file uniquely
       const videoId = YouTubeController.extractVideoId(youtubeLink);
-      const filename = `youtube-${videoId}.md`;
 
       // 3. Extract transcript
       const transcriptText = await youtubeService.extractText(youtubeLink);
@@ -33,8 +32,10 @@ export class YouTubeController {
       }
 
       // 4. Process transcript into structured notes & flashcards via LLM
-      const structuredNotes = await contentService.processContent(transcriptText);
+      const { title, content: structuredNotes } = await contentService.processContent(transcriptText);
 
+      // We still include the videoId to ensure uniqueness, but we use the extracted title as well
+      const filename = `${title}-${videoId}.md`;
 
       // 5. Push the notes to the user's Obsidian GitHub repository
       await githubService.pushToRepository(

@@ -54,13 +54,29 @@ export class ContentService {
    * @param text The raw content text to process.
    * @returns A structured Markdown string containing the summary and flashcards.
    */
-  public async processContent(text: string): Promise<string> {
+  public async processContent(text: string): Promise<{ title: string; content: string }> {
     try {
       const generatedMarkdown = await llmServer.generateContent(
         CONTENT_PROCESSOR_PROMPT,
         `Here is the content to process:\n\n${text}`
       );
-      return generatedMarkdown;
+
+      // Extract the title
+      let title = 'untitled-notes';
+      let content = generatedMarkdown;
+
+      // Match the title section: `# 1. Title` followed by the title text, until the next `# 2.`
+      const titleMatch = generatedMarkdown.match(/# 1\. Title\s*\n+([^#]+)\n+# 2\./i);
+      if (titleMatch && titleMatch[1]) {
+        title = titleMatch[1].trim();
+        // Remove the title section from the content
+        content = generatedMarkdown.replace(/# 1\. Title\s*\n+[^#]+\n+(?=# 2\.)/i, '');
+      }
+
+      // Sanitize the title to be a valid filename
+      title = title.replace(/[^a-z0-9]/gi, '-').replace(/-+/g, '-').toLowerCase();
+
+      return { title, content: content.trim() };
     } catch (error) {
       console.error('Error processing content via LLM:', error);
       throw new Error('Failed to summarize content and generate flashcards.');
