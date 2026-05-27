@@ -28,10 +28,19 @@ export class LLMService {
     });
 
     try {
-      const result = await model.generateContent(userPrompt);
+      const result = await Promise.race([
+        model.generateContent(userPrompt),
+        new Promise<never>((_, reject) => 
+          setTimeout(() => reject(new Error('LLM_TIMEOUT')), 30000)
+        )
+      ]);
       const response = await result.response;
       return response.text();
     } catch (error) {
+      if (error instanceof Error && error.message === 'LLM_TIMEOUT') {
+        console.error('LLM Timeout: Request exceeded 30 seconds.');
+        throw new Error('LLM request timed out. Please try again later.');
+      }
       console.error('Error generating content from LLM:', error);
       throw new Error('Failed to generate content from LLM gateway.');
     }

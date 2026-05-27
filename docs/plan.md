@@ -23,12 +23,12 @@
 
 ## Phase 4: Polish
 - [x] Task 4.1: Add web UI for managing GitHub token, Obsidian repository, and tech stack.
-- [ ] Task 4.2: Implement robust error handling for LLM timeouts or GitHub API limits.
+- [x] Task 4.2: Implement robust error handling for LLM timeouts or GitHub API limits.
 - [ ] Task 4.3: Refine system prompts for all 4 agents based on initial testing.
 - [ ] Task 4.4: Add Telegram sender ID validation (Authentication).
 
 ## Phase 5: Launch
-- [ ] Task 5.1: Write environment setup and deployment README.
+- [ ] Task 5.1: Write environment setup and deployment README. 
 - [ ] Task 5.2: Deploy frontend to Vercel.
 - [ ] Task 5.3: Deploy backend and PostgreSQL to Render/Railway.
 - [ ] Task 5.4: Connect Telegram bot production webhook to the deployed backend.
