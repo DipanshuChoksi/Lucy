@@ -88,3 +88,11 @@ For detailed architecture decisions and feature specs, refer to:
 - [PRD (Product Requirements Document)](./docs/prd.md)
 - [TDD (Technical Design Document)](./docs/tdd.md)
 - [Implementation Plan](./docs/plan.md)
+
+### User Flows
+
+| Flow | Description | Link |
+|------|-------------|------|
+| Registration | Details the Email/Password and Google OAuth registration process | [registration.md](./docs/userflows/registration.md) |
+| Login | Details the Email/Password and Google OAuth login process | [login.md](./docs/userflows/login.md) |
+

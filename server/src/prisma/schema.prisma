@@ -8,9 +8,12 @@ datasource db {
 
 model User {
   id            Int      @id @default(autoincrement())
-  email    String   @unique
+  email         String   @unique
+  passwordHash  String?
+  googleId      String?  @unique
   githubToken   String?
   obsidianRepo  String?
+  techStack     String?
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 }
