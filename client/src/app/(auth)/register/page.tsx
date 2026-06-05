@@ -15,19 +15,19 @@ export default function RegisterPage() {
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
-    
+
     try {
       const res = await apiFetch("/api/auth/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
       });
-      
+
       if (!res.ok) {
         const data = await res.json();
         throw new Error(data.error || "Failed to register");
       }
-      
+
       router.push("/");
       router.refresh();
     } catch (err: any) {
@@ -40,13 +40,13 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-950 text-white p-4">
-      <div className="w-full max-w-md bg-gray-900 border border-gray-800 rounded-2xl p-8 shadow-2xl">
+    <div className="w-full min-h-screen flex items-center justify-center bg-surface-container-lowest text-on-surface p-4">
+      <div className="w-full max-w-[448px] bg-surface-container-lowest border border-outline-variant rounded-2xl p-8 shadow-sm">
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-indigo-500 mb-2">
+          <h1 className="font-display text-headline-lg text-primary mb-2">
             Create an Account
           </h1>
-          <p className="text-gray-400">Join Lucy to boost your learning</p>
+          <p className="font-body-md text-secondary">Join Lucy to boost your learning</p>
         </div>
 
         {error && (
@@ -57,13 +57,13 @@ export default function RegisterPage() {
 
         <form onSubmit={handleRegister} className="space-y-5">
           <div>
-            <label className="block text-sm font-medium text-gray-400 mb-1">Email</label>
+            <label className="block font-label-md text-secondary mb-1">Email</label>
             <div className="relative">
               <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" />
               <input
                 type="email"
                 required
-                className="w-full bg-gray-800 border border-gray-700 text-white rounded-lg py-2.5 pl-10 pr-4 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all outline-none"
+                className="w-full bg-surface-container border border-outline-variant text-on-surface rounded-lg py-2.5 pl-10 pr-4 focus:ring-2 focus:ring-primary focus:border-transparent transition-all outline-none"
                 placeholder="you@example.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
@@ -72,13 +72,13 @@ export default function RegisterPage() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-400 mb-1">Password</label>
+            <label className="block font-label-md text-secondary mb-1">Password</label>
             <div className="relative">
               <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" />
               <input
                 type="password"
                 required
-                className="w-full bg-gray-800 border border-gray-700 text-white rounded-lg py-2.5 pl-10 pr-4 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all outline-none"
+                className="w-full bg-surface-container border border-outline-variant text-on-surface rounded-lg py-2.5 pl-10 pr-4 focus:ring-2 focus:ring-primary focus:border-transparent transition-all outline-none"
                 placeholder="••••••••"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
@@ -89,7 +89,7 @@ export default function RegisterPage() {
 
           <button
             type="submit"
-            className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2.5 rounded-lg transition-colors flex items-center justify-center gap-2"
+            className="w-full bg-primary hover:bg-surface-tint text-on-primary font-label-lg py-2.5 rounded-lg transition-colors flex items-center justify-center gap-2"
           >
             <UserPlus className="w-5 h-5" />
             Sign up
@@ -104,7 +104,7 @@ export default function RegisterPage() {
 
         <button
           onClick={handleGoogleLogin}
-          className="mt-6 w-full bg-white hover:bg-gray-100 text-gray-900 font-medium py-2.5 rounded-lg transition-colors flex items-center justify-center gap-3"
+          className="mt-6 w-full bg-surface-container border border-outline-variant hover:bg-surface-container-highest text-on-surface font-label-lg py-2.5 rounded-lg transition-colors flex items-center justify-center gap-3"
         >
           <svg className="w-5 h-5" viewBox="0 0 24 24">
             <path fill="currentColor" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
@@ -116,9 +116,9 @@ export default function RegisterPage() {
           Google
         </button>
 
-        <p className="mt-8 text-center text-sm text-gray-400">
+        <p className="mt-8 text-center text-sm text-secondary">
           Already have an account?{" "}
-          <Link href="/login" className="text-blue-400 hover:text-blue-300 font-medium transition-colors">
+          <Link href="/login" className="text-primary hover:text-surface-tint font-bold transition-colors">
             Sign in
           </Link>
         </p>

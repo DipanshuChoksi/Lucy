@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import {  FolderGit2, Save, Loader2, CheckCircle2 } from 'lucide-react';
+import { FolderGit2, Save, Loader2, CheckCircle2 } from 'lucide-react';
 
 export const SettingsForm: React.FC = () => {
   const [obsidianRepo, setObsidianRepo] = useState('');
@@ -70,19 +70,19 @@ export const SettingsForm: React.FC = () => {
 
 
       <div className="flex flex-col gap-2">
-        <label htmlFor="obsidian-repo" className="font-medium text-sm text-text-main flex items-center gap-2">
-          <FolderGit2 size={16} className="text-text-muted" aria-hidden="true" />
+        <label htmlFor="obsidian-repo" className="font-medium text-sm text-on-surface flex items-center gap-2">
+          <FolderGit2 size={16} className="text-secondary" aria-hidden="true" />
           Obsidian GitHub Repository
         </label>
-        <input 
+        <input
           id="obsidian-repo"
-          type="text" 
+          type="text"
           value={obsidianRepo}
           onChange={(e) => setObsidianRepo(e.target.value)}
           onKeyDown={(e) => {
             if (e.key === 'Enter') handleSave(e as any);
           }}
-          className="min-h-[44px] border border-border-main rounded-md px-3 py-2 bg-bg-surface text-text-main outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-colors"
+          className="min-h-[44px] border border-outline-variant rounded-md px-3 py-2 bg-surface-container-lowest text-on-surface outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-colors"
           placeholder="username/my-obsidian-vault"
         />
         {errorMessage && (
@@ -93,13 +93,12 @@ export const SettingsForm: React.FC = () => {
         )}
       </div>
 
-      <button 
-        type="button" 
+      <button
+        type="button"
         disabled={isSaving}
         onClick={handleSave as any}
-        className={`mt-6 flex items-center justify-center gap-2 text-bg-surface font-bold py-3 px-4 rounded-md cursor-pointer transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary disabled:cursor-not-allowed ${
-          saveSuccess ? 'bg-green-600 hover:bg-green-700' : 'bg-cta hover:bg-cta-hover disabled:opacity-80'
-        }`}
+        className={`mt-6 flex items-center justify-center gap-2 font-bold py-3 px-4 rounded-md cursor-pointer transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary disabled:cursor-not-allowed ${saveSuccess ? 'bg-green-600 text-white hover:bg-green-700' : 'bg-primary text-on-primary hover:bg-surface-tint disabled:opacity-80'
+          }`}
       >
         {isSaving ? (
           <Loader2 size={18} className="animate-spin" aria-hidden="true" />

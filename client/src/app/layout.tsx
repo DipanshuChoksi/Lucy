@@ -13,10 +13,11 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
+      <head>
+        <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet" />
+      </head>
       <body>
-        <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center">
-          {children}
-        </div>
+        {children}
       </body>
     </html>
   );
