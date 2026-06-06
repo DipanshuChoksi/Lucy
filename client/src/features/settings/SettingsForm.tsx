@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { FolderGit2, Save, Loader2, CheckCircle2 } from 'lucide-react';
+import { apiFetch } from '@/src/lib/api';
 
 export const SettingsForm: React.FC = () => {
   const [obsidianRepo, setObsidianRepo] = useState('');
@@ -13,7 +14,7 @@ export const SettingsForm: React.FC = () => {
   useEffect(() => {
     const fetchSettings = async () => {
       try {
-        const response = await fetch('/api/settings?email=web-user@example.com');
+        const response = await apiFetch('/api/settings?email=web-user@example.com');
         if (response.ok) {
           const data = await response.json();
           if (data && data.obsidianRepo) {
@@ -36,7 +37,7 @@ export const SettingsForm: React.FC = () => {
     console.log("hello world");
 
     try {
-      const response = await fetch('/api/settings', {
+      const response = await apiFetch('/api/settings', {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',

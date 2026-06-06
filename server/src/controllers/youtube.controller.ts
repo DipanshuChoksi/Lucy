@@ -7,8 +7,7 @@ import { settingsService } from '../services/settings.service';
 export class YouTubeController {
   async processVideo(req: Request, res: Response) {
     try {
-      const { youtubeLink } = req.body;
-      const email = 'web-user@example.com'; // using a dummy ema  il instead of dummy telegramId
+      const { youtubeLink, email } = req.body;
 
       if (!youtubeLink) {
         return res.status(400).json({ error: 'youtubeLink is required' });

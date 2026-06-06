@@ -1,6 +1,8 @@
 import { Request, Response } from "express";
 import { generateToken } from "../middlewares/csrf.middleware";
 import { prisma } from '../lib/prisma';
+import argon2 from 'argon2';
+import { setTokenCookie } from "../utils/auth.util";
 
 export const getCsrfToken = (req: Request, res: Response) => {
     const token = generateToken(req, res);
