@@ -14,6 +14,11 @@ model User {
   githubToken   String?
   obsidianRepo  String?
   techStack     String?
+  storageProvider   String   @default("GITHUB")
+  s3Bucket          String?
+  s3Region          String?
+  s3AccessKeyId     String?
+  s3SecretAccessKey String?
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 }

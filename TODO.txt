@@ -1,2 +1,0 @@
-- Remove CSRF protection in registration userflow.
-- Develop proper login and register flow using google account.

@@ -13,7 +13,7 @@ A multi-agent development assistant with accompanying Next.js web application. T
 - **Frontend:** Next.js (React), Tailwind CSS, TypeScript
 - **Backend:** Node.js, Express, TypeScript
 - **Database:** PostgreSQL (with Prisma ORM)
-- **Integrations:** GitHub API, LLM API (Gemini)
+- **Integrations:** GitHub API, S3 API, LLM API (Gemini)
 
 ### Project Structure
 
@@ -38,8 +38,7 @@ lucy/
 
 ### Prerequisites
 - Node.js (v18+)
-- PostgreSQL instance running locally or via Docker
-- A GitHub Personal Access Token (for Obsidian sync)
+- A GitHub Personal Access Token or S3 credentials for storage
 
 ### Backend Setup
 1. Navigate to the backend directory:
@@ -79,9 +78,6 @@ lucy/
    ```
 4. Open [http://localhost:3000](http://localhost:3000) to view the Web Dashboard.
 
-## 🛡️ Security Notes
-- The SQL Sandbox connects to PostgreSQL using a severely restricted, read-only user role to prevent destructive operations (`DROP`, `DELETE`) by users or the LLM.
-- Webhook endpoints enforce strict authentication to ensure only authorized sender IDs can interact with the agents.
 
 ## 📄 Documentation
 For detailed architecture decisions and feature specs, refer to:

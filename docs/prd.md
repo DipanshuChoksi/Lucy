@@ -12,10 +12,10 @@ Developers frequently context-switch between coding, learning algorithms, watchi
 - **Junior to Mid-Level Engineers:** Learn from Youtube actively.
 
 ## 3. Proposed Solution
-A multi-agent Developer Assistant platform with accompanying web application. The platform provides active-recall study notes from videos synced to Obsidian via GitHub.
+A Developer Assistant platform with accompanying web application. The platform provides active-recall study notes from videos synced to Obsidian via Storage provider selected by the user.
 
 ## 4. Key Features (MVP)
-- **Content Ingestor (Active Recall):** Extracts YouTube/article content, generates markdown notes and flashcards, and pushes them to a GitHub repo synced with the user's Obsidian vault.
+- **Content Ingestor (Active Recall):** Extracts YouTube/article content, generates markdown notes and flashcards, and pushes them to a Storage provider selected by the user synced with the user's Obsidian vault.
 - **Accompanying Webapp:** A centralized dashboard built with Node.js/TS to manage settings, and configure integrations.
 
 ## 5. Success Metrics
@@ -25,7 +25,7 @@ A multi-agent Developer Assistant platform with accompanying web application. Th
 - Complex user authentication for multiple disparate users (initially scoped as a personal or single-tenant tool).
 
 ## 7. Acceptance Criteria
-- **Content Ingestor:** Given a YouTube link, when the bot processes it, then a markdown file with flashcards is successfully committed to the target GitHub repository.
+- **Content Ingestor:** Given a YouTube link, when the bot processes it, then a markdown file with flashcards is successfully committed to the  Storage provider selected by the user.
 
 ## 8. Open Questions
 - None at this time.

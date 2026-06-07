@@ -1,4 +1,11 @@
-export class GitHubService {
+import { StorageAdapter } from './storage.adapter';
+
+export class GitHubStorageAdapter implements StorageAdapter {
+  private githubToken: string;
+
+  constructor(githubToken: string) {
+    this.githubToken = githubToken;
+  }
   /**
    * Pushes a Markdown file to a GitHub repository.
    * @param repo The repository in the format "owner/repo".
@@ -27,7 +34,7 @@ export class GitHubService {
       const getResponse = await fetch(url, {
         method: 'GET',
         headers: {
-          'Authorization': `Bearer ${process.env.GITHUB_PERSONAL_ACCESS_TOKEN}`,
+          'Authorization': `Bearer ${this.githubToken}`,
           'Accept': 'application/vnd.github.v3+json',
         },
       });
@@ -40,7 +47,7 @@ export class GitHubService {
       const response = await fetch(url, {
         method: 'PUT',
         headers: {
-          'Authorization': `Bearer ${process.env.GITHUB_PERSONAL_ACCESS_TOKEN}`,
+          'Authorization': `Bearer ${this.githubToken}`,
           'Accept': 'application/vnd.github.v3+json',
           'Content-Type': 'application/json',
         },
@@ -84,8 +91,3 @@ export class GitHubService {
     }
   }
 }
-
-export const githubService = new GitHubService();
-
-
-

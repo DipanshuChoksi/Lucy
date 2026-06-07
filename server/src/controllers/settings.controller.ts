@@ -22,16 +22,24 @@ export class SettingsController {
   }
 
   async updateSettings(req: Request, res: Response) {
+    //TODO: Add validation when we have selected storage provider and that storage provider's information
     try {
-      let { email, githubToken, obsidianRepo } = req.body;
+      let { email, githubToken, obsidianRepo, storageProvider, s3Bucket, s3Region, s3AccessKeyId, s3SecretAccessKey } = req.body;
+
       if (!email) {
         return res.status(400).json({ error: 'email is required' });
       }
+
       email = String(email);
 
       const user = await settingsService.updateSettings(email, {
         githubToken,
         obsidianRepo,
+        storageProvider,
+        s3Bucket,
+        s3Region,
+        s3AccessKeyId,
+        s3SecretAccessKey
       });
 
       return res.json(user);

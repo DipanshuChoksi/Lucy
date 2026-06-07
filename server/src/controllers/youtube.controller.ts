@@ -1,7 +1,9 @@
 import { Request, Response } from 'express';
 import { youtubeService } from '../services/youtube.service';
 import { contentService } from '../services/content.service';
-import { githubService } from '../services/github.service';
+import { StorageAdapter } from '../services/storage/storage.adapter';
+import { GitHubStorageAdapter } from '../services/storage/github.adapter';
+import { S3StorageAdapter } from '../services/storage/s3.adapter';
 import { settingsService } from '../services/settings.service';
 
 export class YouTubeController {
@@ -13,12 +15,10 @@ export class YouTubeController {
         return res.status(400).json({ error: 'youtubeLink is required' });
       }
 
-      // 1. Fetch user settings to get Obsidian repository info
+      // 1. Fetch user settings to get Storage config
       const userSettings = await settingsService.getSettings(email);
-      if (!userSettings || !userSettings.obsidianRepo) {
-        return res.status(400).json({
-          error: 'Obsidian repository is not configured. Please set it up in the settings first.'
-        });
+      if (!userSettings) {
+        return res.status(400).json({ error: 'User settings not found.' });
       }
 
       // 2. Extract video ID for naming the file uniquely
@@ -36,16 +36,41 @@ export class YouTubeController {
       // We still include the videoId to ensure uniqueness, but we use the extracted title as well
       const filename = `${title}-${videoId}.md`;
 
-      // 5. Push the notes to the user's Obsidian GitHub repository
-      await githubService.pushToRepository(
-        userSettings.obsidianRepo,
+      // 5. Push the notes to the user's selected storage provider
+      let storageAdapter: StorageAdapter;
+      let target: string;
+
+      if (userSettings.storageProvider === 'S3') {
+        if (!userSettings.s3Bucket || !userSettings.s3Region || !userSettings.s3AccessKeyId || !userSettings.s3SecretAccessKey) {
+          return res.status(400).json({
+            error: 'S3 storage is not fully configured in settings.'
+          });
+        }
+        storageAdapter = new S3StorageAdapter(
+          userSettings.s3Region,
+          userSettings.s3AccessKeyId,
+          userSettings.s3SecretAccessKey
+        );
+        target = userSettings.s3Bucket;
+      } else {
+        if (!userSettings.obsidianRepo || !userSettings.githubToken) {
+          return res.status(400).json({
+            error: 'Obsidian GitHub repository or GitHub Token is not configured in settings.'
+          });
+        }
+        storageAdapter = new GitHubStorageAdapter(userSettings.githubToken);
+        target = userSettings.obsidianRepo;
+      }
+
+      await storageAdapter.pushToRepository(
+        target,
         filename,
         structuredNotes
       );
 
       return res.json({
         success: true,
-        message: `Successfully processed and saved to ${userSettings.obsidianRepo}/${filename}`,
+        message: `Successfully processed and saved to ${target}/${filename}`,
         summary: structuredNotes
       });
     } catch (error: any) {
