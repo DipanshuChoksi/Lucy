@@ -16,11 +16,16 @@ export class SettingsService {
   async getSettings(email: string) {
     const user = await prisma.user.findUnique({
       where: { email },
+      include: {
+        settings: true,
+        githubIntegration: true,
+        s3Integration: true,
+      },
     });
     if (user) {
-      if (user.githubToken) user.githubToken = decrypt(user.githubToken);
-      if (user.s3AccessKeyId) user.s3AccessKeyId = decrypt(user.s3AccessKeyId);
-      if (user.s3SecretAccessKey) user.s3SecretAccessKey = decrypt(user.s3SecretAccessKey);
+      if (user.githubIntegration?.encryptedToken) user.githubIntegration.encryptedToken = decrypt(user.githubIntegration.encryptedToken);
+      if (user.s3Integration?.accessKeyId) user.s3Integration.accessKeyId = decrypt(user.s3Integration.accessKeyId);
+      if (user.s3Integration?.secretAccessKey) user.s3Integration.secretAccessKey = decrypt(user.s3Integration.secretAccessKey);
     }
     return user;
   }
@@ -33,26 +38,75 @@ export class SettingsService {
     return prisma.user.upsert({
       where: { email },
       update: {
-        githubToken: data.githubToken === '' ? null : githubToken,
-        obsidianRepo: data.obsidianRepo === '' ? null : data.obsidianRepo,
-        techStack: data.techStack === '' ? null : data.techStack,
-        storageProvider: data.storageProvider === '' ? undefined : data.storageProvider,
-        s3Bucket: data.s3Bucket === '' ? null : data.s3Bucket,
-        s3Region: data.s3Region === '' ? null : data.s3Region,
-        s3AccessKeyId: data.s3AccessKeyId === '' ? null : s3AccessKeyId,
-        s3SecretAccessKey: data.s3SecretAccessKey === '' ? null : s3SecretAccessKey,
+        settings: {
+          upsert: {
+            create: {
+              techStack: data.techStack || undefined,
+              storageProvider: data.storageProvider || "GITHUB",
+            },
+            update: {
+              techStack: data.techStack === '' ? null : data.techStack,
+              storageProvider: data.storageProvider === '' ? undefined : data.storageProvider,
+            }
+          }
+        },
+        githubIntegration: {
+          upsert: {
+            create: {
+              encryptedToken: githubToken,
+              repoName: data.obsidianRepo || undefined,
+            },
+            update: {
+              encryptedToken: data.githubToken === '' ? null : githubToken,
+              repoName: data.obsidianRepo === '' ? null : data.obsidianRepo,
+            }
+          }
+        },
+        s3Integration: {
+          upsert: {
+            create: {
+              bucket: data.s3Bucket || undefined,
+              region: data.s3Region || undefined,
+              accessKeyId: s3AccessKeyId,
+              secretAccessKey: s3SecretAccessKey,
+            },
+            update: {
+              bucket: data.s3Bucket === '' ? null : data.s3Bucket,
+              region: data.s3Region === '' ? null : data.s3Region,
+              accessKeyId: data.s3AccessKeyId === '' ? null : s3AccessKeyId,
+              secretAccessKey: data.s3SecretAccessKey === '' ? null : s3SecretAccessKey,
+            }
+          }
+        }
       },
       create: {
         email,
-        githubToken,
-        obsidianRepo: data.obsidianRepo || undefined,
-        techStack: data.techStack || undefined,
-        storageProvider: data.storageProvider || undefined,
-        s3Bucket: data.s3Bucket || undefined,
-        s3Region: data.s3Region || undefined,
-        s3AccessKeyId,
-        s3SecretAccessKey,
+        settings: {
+          create: {
+            techStack: data.techStack || undefined,
+            storageProvider: data.storageProvider || "GITHUB",
+          }
+        },
+        githubIntegration: {
+          create: {
+            encryptedToken: githubToken,
+            repoName: data.obsidianRepo || undefined,
+          }
+        },
+        s3Integration: {
+          create: {
+            bucket: data.s3Bucket || undefined,
+            region: data.s3Region || undefined,
+            accessKeyId: s3AccessKeyId,
+            secretAccessKey: s3SecretAccessKey,
+          }
+        }
       },
+      include: {
+        settings: true,
+        githubIntegration: true,
+        s3Integration: true,
+      }
     });
   }
 }

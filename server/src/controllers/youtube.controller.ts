@@ -40,26 +40,26 @@ export class YouTubeController {
       let storageAdapter: StorageAdapter;
       let target: string;
 
-      if (userSettings.storageProvider === 'S3') {
-        if (!userSettings.s3Bucket || !userSettings.s3Region || !userSettings.s3AccessKeyId || !userSettings.s3SecretAccessKey) {
+      if (userSettings.settings?.storageProvider === 'S3') {
+        if (!userSettings.s3Integration?.bucket || !userSettings.s3Integration?.region || !userSettings.s3Integration?.accessKeyId || !userSettings.s3Integration?.secretAccessKey) {
           return res.status(400).json({
             error: 'S3 storage is not fully configured in settings.'
           });
         }
         storageAdapter = new S3StorageAdapter(
-          userSettings.s3Region,
-          userSettings.s3AccessKeyId,
-          userSettings.s3SecretAccessKey
+          userSettings.s3Integration.region,
+          userSettings.s3Integration.accessKeyId,
+          userSettings.s3Integration.secretAccessKey
         );
-        target = userSettings.s3Bucket;
+        target = userSettings.s3Integration.bucket;
       } else {
-        if (!userSettings.obsidianRepo || !userSettings.githubToken) {
+        if (!userSettings.githubIntegration?.repoName || !userSettings.githubIntegration?.encryptedToken) {
           return res.status(400).json({
             error: 'Obsidian GitHub repository or GitHub Token is not configured in settings.'
           });
         }
-        storageAdapter = new GitHubStorageAdapter(userSettings.githubToken);
-        target = userSettings.obsidianRepo;
+        storageAdapter = new GitHubStorageAdapter(userSettings.githubIntegration.encryptedToken);
+        target = userSettings.githubIntegration.repoName;
       }
 
       await storageAdapter.pushToRepository(

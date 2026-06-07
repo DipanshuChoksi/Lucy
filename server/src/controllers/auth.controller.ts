@@ -89,7 +89,5 @@ export const me = (req: Request, res: Response) => {
     res.json({
         id: user.id,
         email: user.email,
-        githubToken: user.githubToken ? '***' : null,
-        obsidianRepo: user.obsidianRepo,
     });
 }

@@ -12,33 +12,33 @@ export class NotesController {
         return res.status(400).json({ error: 'email is required' });
       }
 
-      const userSettings = await settingsService.getSettings(email);
-      if (!userSettings) {
+      const user = await settingsService.getSettings(email);
+      if (!user) {
         return res.status(404).json({ error: 'User settings not found.' });
       }
 
       const allNotes: NoteMetadata[] = [];
 
       // Fetch from GitHub if configured
-      if (userSettings.obsidianRepo && userSettings.githubToken) {
-        const githubAdapter = new GitHubStorageAdapter(userSettings.githubToken);
-        const githubNotes = await githubAdapter.listNotes(userSettings.obsidianRepo);
+      if (user.githubIntegration?.repoName && user.githubIntegration?.encryptedToken) {
+        const githubAdapter = new GitHubStorageAdapter(user.githubIntegration.encryptedToken);
+        const githubNotes = await githubAdapter.listNotes(user.githubIntegration.repoName);
         allNotes.push(...githubNotes);
       }
 
       // Fetch from S3 if configured
       if (
-        userSettings.s3Bucket &&
-        userSettings.s3Region &&
-        userSettings.s3AccessKeyId &&
-        userSettings.s3SecretAccessKey
+        user.s3Integration?.bucket &&
+        user.s3Integration?.region &&
+        user.s3Integration?.accessKeyId &&
+        user.s3Integration?.secretAccessKey
       ) {
         const s3Adapter = new S3StorageAdapter(
-          userSettings.s3Region,
-          userSettings.s3AccessKeyId,
-          userSettings.s3SecretAccessKey
+          user.s3Integration.region,
+          user.s3Integration.accessKeyId,
+          user.s3Integration.secretAccessKey
         );
-        const s3Notes = await s3Adapter.listNotes(userSettings.s3Bucket);
+        const s3Notes = await s3Adapter.listNotes(user.s3Integration.bucket);
         allNotes.push(...s3Notes);
       }
 
@@ -68,29 +68,29 @@ export class NotesController {
         return res.status(400).json({ error: 'email, filename, and source are required' });
       }
 
-      const userSettings = await settingsService.getSettings(email);
-      if (!userSettings) {
+      const user = await settingsService.getSettings(email);
+      if (!user) {
         return res.status(404).json({ error: 'User settings not found.' });
       }
 
       let content = '';
 
       if (source === 'GITHUB') {
-        if (!userSettings.obsidianRepo || !userSettings.githubToken) {
+        if (!user.githubIntegration?.repoName || !user.githubIntegration?.encryptedToken) {
           return res.status(400).json({ error: 'GitHub is not fully configured.' });
         }
-        const githubAdapter = new GitHubStorageAdapter(userSettings.githubToken);
-        content = await githubAdapter.getNoteContent(userSettings.obsidianRepo, filename);
+        const githubAdapter = new GitHubStorageAdapter(user.githubIntegration.encryptedToken);
+        content = await githubAdapter.getNoteContent(user.githubIntegration.repoName, filename);
       } else if (source === 'S3') {
-        if (!userSettings.s3Bucket || !userSettings.s3Region || !userSettings.s3AccessKeyId || !userSettings.s3SecretAccessKey) {
+        if (!user.s3Integration?.bucket || !user.s3Integration?.region || !user.s3Integration?.accessKeyId || !user.s3Integration?.secretAccessKey) {
           return res.status(400).json({ error: 'S3 is not fully configured.' });
         }
         const s3Adapter = new S3StorageAdapter(
-          userSettings.s3Region,
-          userSettings.s3AccessKeyId,
-          userSettings.s3SecretAccessKey
+          user.s3Integration.region,
+          user.s3Integration.accessKeyId,
+          user.s3Integration.secretAccessKey
         );
-        content = await s3Adapter.getNoteContent(userSettings.s3Bucket, filename);
+        content = await s3Adapter.getNoteContent(user.s3Integration.bucket, filename);
       } else {
         return res.status(400).json({ error: 'Invalid source. Must be GITHUB or S3.' });
       }

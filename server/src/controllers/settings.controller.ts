@@ -14,7 +14,18 @@ export class SettingsController {
         return res.status(404).json({ error: 'User not found' });
       }
 
-      return res.json(user);
+      return res.json({
+        id: user.id,
+        email: user.email,
+        githubToken: user.githubIntegration?.encryptedToken ? '***' : null,
+        obsidianRepo: user.githubIntegration?.repoName,
+        techStack: user.settings?.techStack,
+        storageProvider: user.settings?.storageProvider,
+        s3Bucket: user.s3Integration?.bucket,
+        s3Region: user.s3Integration?.region,
+        s3AccessKeyId: user.s3Integration?.accessKeyId ? '***' : null,
+        s3SecretAccessKey: user.s3Integration?.secretAccessKey ? '***' : null,
+      });
     } catch (error) {
       console.error('Error fetching settings:', error);
       return res.status(500).json({ error: 'Internal server error' });
@@ -42,7 +53,18 @@ export class SettingsController {
         s3SecretAccessKey
       });
 
-      return res.json(user);
+      return res.json({
+        id: user.id,
+        email: user.email,
+        githubToken: user.githubIntegration?.encryptedToken ? '***' : null,
+        obsidianRepo: user.githubIntegration?.repoName,
+        techStack: user.settings?.techStack,
+        storageProvider: user.settings?.storageProvider,
+        s3Bucket: user.s3Integration?.bucket,
+        s3Region: user.s3Integration?.region,
+        s3AccessKeyId: user.s3Integration?.accessKeyId ? '***' : null,
+        s3SecretAccessKey: user.s3Integration?.secretAccessKey ? '***' : null,
+      });
     } catch (error) {
       console.error('Error updating settings:', error);
       return res.status(500).json({ error: 'Internal server error' });
