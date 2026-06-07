@@ -4,6 +4,7 @@ import cookieParser from 'cookie-parser';
 import settingsRoutes from './routes/settings.routes';
 import youtubeRoutes from './routes/youtube.routes';
 import authRoutes from './routes/auth.routes';
+import notesRoutes from './routes/notes.routes';
 import { doubleCsrfProtection } from './middlewares/csrf.middleware';
 import dotenv from "dotenv"
 
@@ -27,5 +28,6 @@ app.use(doubleCsrfProtection);
 app.use('/api/auth', authRoutes);
 app.use('/api', settingsRoutes);
 app.use('/api', youtubeRoutes);
+app.use('/api', notesRoutes);
 
 export default app;

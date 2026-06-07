@@ -45,6 +45,12 @@ function NavbarMobile() {
                             Recent
                         </div>
                     </Link>
+                    <Link onClick={() => setIsOpen(false)} className={getLinkClasses('/reader')} href="/reader">
+                        <div className="flex items-center gap-sm">
+                            <span className="material-symbols-outlined text-[20px]">menu_book</span>
+                            Reader
+                        </div>
+                    </Link>
                     <Link onClick={() => setIsOpen(false)} className={getLinkClasses('/settings')} href="/settings">
                         <div className="flex items-center gap-sm">
                             <span className="material-symbols-outlined text-[20px]">settings</span>

@@ -1,5 +1,5 @@
-import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
-import { StorageAdapter } from './storage.adapter';
+import { S3Client, PutObjectCommand, ListObjectsV2Command, GetObjectCommand } from '@aws-sdk/client-s3';
+import { StorageAdapter, NoteMetadata } from './storage.adapter';
 
 export class S3StorageAdapter implements StorageAdapter {
   private s3Client: S3Client;
@@ -31,6 +31,55 @@ export class S3StorageAdapter implements StorageAdapter {
     } catch (error) {
       console.error('S3 Upload Error:', error);
       throw new Error(`Failed to upload to S3: ${(error as Error).message}`);
+    }
+  }
+
+  public async listNotes(bucket: string): Promise<NoteMetadata[]> {
+    try {
+      const command = new ListObjectsV2Command({
+        Bucket: bucket,
+      });
+
+      const response = await this.s3Client.send(command);
+      const items = response.Contents || [];
+
+      return items
+        .filter(item => item.Key && item.Key.endsWith('.md'))
+        .map(item => ({
+          filename: item.Key as string,
+          source: 'S3',
+          lastModified: item.LastModified,
+        }));
+    } catch (error) {
+      console.error('S3 List Error:', error);
+      return [];
+    }
+  }
+
+  public async getNoteContent(bucket: string, filename: string): Promise<string> {
+    try {
+      const command = new GetObjectCommand({
+        Bucket: bucket,
+        Key: filename,
+      });
+
+      const response = await this.s3Client.send(command);
+      
+      if (!response.Body) {
+        throw new Error('S3 response body is empty');
+      }
+
+      // Convert stream to string
+      const stream = response.Body as NodeJS.ReadableStream;
+      return await new Promise<string>((resolve, reject) => {
+        const chunks: any[] = [];
+        stream.on('data', chunk => chunks.push(chunk));
+        stream.on('error', reject);
+        stream.on('end', () => resolve(Buffer.concat(chunks).toString('utf-8')));
+      });
+    } catch (error) {
+      console.error('S3 Get Content Error:', error);
+      throw new Error(`Failed to fetch note content from S3: ${(error as Error).message}`);
     }
   }
 }

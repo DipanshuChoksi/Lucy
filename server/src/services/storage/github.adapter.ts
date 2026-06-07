@@ -1,4 +1,4 @@
-import { StorageAdapter } from './storage.adapter';
+import { StorageAdapter, NoteMetadata } from './storage.adapter';
 
 export class GitHubStorageAdapter implements StorageAdapter {
   private githubToken: string;
@@ -88,6 +88,66 @@ export class GitHubStorageAdapter implements StorageAdapter {
         throw new Error('GitHub API request timed out after 15 seconds.');
       }
       throw error; // Re-throw other errors
+    }
+  }
+
+  public async listNotes(repo: string): Promise<NoteMetadata[]> {
+    const url = `https://api.github.com/repos/${repo}/contents/`;
+
+    try {
+      const response = await fetch(url, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${this.githubToken}`,
+          'Accept': 'application/vnd.github.v3+json',
+        },
+      });
+
+      if (!response.ok) {
+        if (response.status === 404) {
+          return []; // Repo or path not found, maybe empty
+        }
+        throw new Error(`Failed to list GitHub notes: ${response.statusText}`);
+      }
+
+      const files = await response.json();
+      if (!Array.isArray(files)) {
+        return [];
+      }
+
+      return files
+        .filter((file: any) => file.type === 'file' && file.name.endsWith('.md'))
+        .map((file: any) => ({
+          filename: file.name,
+          source: 'GITHUB',
+          url: file.html_url,
+        }));
+    } catch (error) {
+      console.error('Error fetching from GitHub:', error);
+      return [];
+    }
+  }
+
+  public async getNoteContent(repo: string, filename: string): Promise<string> {
+    const url = `https://api.github.com/repos/${repo}/contents/${filename}`;
+    
+    try {
+      const response = await fetch(url, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${this.githubToken}`,
+          'Accept': 'application/vnd.github.v3.raw',
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error(`Failed to fetch note content from GitHub: ${response.statusText}`);
+      }
+
+      return await response.text();
+    } catch (error) {
+      console.error('Error fetching note content from GitHub:', error);
+      throw error;
     }
   }
 }

@@ -38,6 +38,10 @@ function NavbarDesktop() {
           <span className={getIconClasses('/queue')} data-icon="history">history</span>
           <span className="font-label-md text-label-md">Recent</span>
         </Link>
+        <Link className={getLinkClasses('/reader')} href="/reader">
+          <span className={getIconClasses('/reader')} data-icon="menu_book">menu_book</span>
+          <span className="font-label-md text-label-md">Reader</span>
+        </Link>
         <Link className={getLinkClasses('/settings')} href="/settings">
           <span className={getIconClasses('/settings')} data-icon="settings">settings</span>
           <span className="font-label-md text-label-md">Settings</span>
