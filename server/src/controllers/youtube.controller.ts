@@ -5,6 +5,7 @@ import { StorageAdapter } from '../services/storage/storage.adapter';
 import { GitHubStorageAdapter } from '../services/storage/github.adapter';
 import { S3StorageAdapter } from '../services/storage/s3.adapter';
 import { settingsService } from '../services/settings.service';
+import { prisma } from '../lib/prisma';
 
 export class YouTubeController {
   async processVideo(req: Request, res: Response) {
@@ -67,6 +68,15 @@ export class YouTubeController {
         filename,
         structuredNotes
       );
+
+      await prisma.file.create({
+        data: {
+          userId: userSettings.id,
+          title: title,
+          storageType: userSettings.settings?.storageProvider === 'S3' ? 'S3' : 'GITHUB',
+          filename: filename
+        }
+      });
 
       return res.json({
         success: true,

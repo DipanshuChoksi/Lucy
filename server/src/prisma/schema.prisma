@@ -16,6 +16,18 @@ model User {
   settings          UserSettings?
   githubIntegration GithubIntegration?
   s3Integration     S3Integration?
+  files             File[]
+}
+
+model File {
+  id          Int      @id @default(autoincrement())
+  userId      Int
+  title       String
+  storageType String
+  filename    String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model UserSettings {

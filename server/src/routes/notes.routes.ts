@@ -8,6 +8,6 @@ const router = Router();
 router.get('/notes', doubleCsrfProtection, notesController.getNotesList);
 
 // Endpoint to fetch specific note content. Using a GET request.
-router.get('/notes/content', doubleCsrfProtection, notesController.getNoteContent);
+router.get('/notes/content/:id', doubleCsrfProtection, notesController.getNoteContent);
 
 export default router;
