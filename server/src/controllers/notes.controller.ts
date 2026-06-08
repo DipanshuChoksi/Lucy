@@ -11,10 +11,16 @@ export class NotesController {
       if (!email) {
         return res.status(400).json({ error: 'email is required' });
       }
+      const q = req.query.q as string;
 
       const user = await prisma.user.findUnique({
         where: { email },
-        include: { files: { orderBy: { createdAt: 'desc' } } }
+        include: {
+          files: {
+            where: q ? { title: { contains: q, mode: 'insensitive' } } : undefined,
+            orderBy: { createdAt: 'desc' }
+          }
+        }
       });
       if (!user) {
         return res.status(404).json({ error: 'User not found.' });

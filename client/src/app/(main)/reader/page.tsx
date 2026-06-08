@@ -14,11 +14,14 @@ interface NoteMetadata {
 export default function NoteReader() {
   const [notes, setNotes] = useState<NoteMetadata[]>([]);
   const [loading, setLoading] = useState(true);
+  const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {
     const fetchNotes = async () => {
+      setLoading(true);
       try {
-        const response = await apiFetch('/api/notes?email=web-user@example.com');
+        const url = `/api/notes?email=web-user@example.com${searchQuery ? `&q=${encodeURIComponent(searchQuery)}` : ''}`;
+        const response = await apiFetch(url);
         if (response.ok) {
           const data = await response.json();
           setNotes(data.notes || []);
@@ -29,20 +32,37 @@ export default function NoteReader() {
         setLoading(false);
       }
     };
-    fetchNotes();
-  }, []);
+    
+    const timeoutId = setTimeout(() => {
+      fetchNotes();
+    }, 300); // 300ms debounce
+    
+    return () => clearTimeout(timeoutId);
+  }, [searchQuery]);
 
   return (
     <main className="flex-1 flex flex-col md:ml-64 min-h-screen bg-background">
       <section className="w-full flex-col p-md bg-surface-container-lowest h-screen overflow-y-auto">
-        <header className="mb-lg">
-          <h1 className="font-display text-headline-md text-on-background mb-xs">Your Notes</h1>
-          <p className="font-body-sm text-on-surface-variant">
-            {notes.length} notes found across your storage.
-          </p>
+        <header className="mb-lg flex flex-col gap-4">
+          <div>
+            <h1 className="font-display text-headline-md text-on-background mb-xs">Your Notes</h1>
+            <p className="font-body-sm text-on-surface-variant">
+              {notes.length} notes found across your storage.
+            </p>
+          </div>
+          <div className="relative w-full max-w-md min-w-[300px] sm:min-w-[400px]">
+            <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant pointer-events-none">search</span>
+            <input 
+              type="text"
+              placeholder="Search notes by title..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full min-h-[48px] pl-10 pr-4 py-2 rounded-xl border border-outline-variant bg-surface focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all text-on-surface"
+            />
+          </div>
         </header>
 
-        {loading ? (
+        {loading && !notes.length ? (
           <div className="text-center text-on-surface-variant py-xl font-body-md">Loading...</div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-sm">
