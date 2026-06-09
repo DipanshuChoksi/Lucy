@@ -1,6 +1,21 @@
 import { GoogleGenerativeAI, ChatSession } from '@google/generative-ai';
+import { ILLMService, IChatSession, ILLMResponse } from './llm.interface';
 
-export class LLMService {
+// Wrapper to make Gemini's ChatSession compatible with IChatSession
+class GeminiChatSessionWrapper implements IChatSession {
+  constructor(private session: ChatSession) {}
+
+  async sendMessage(message: string): Promise<ILLMResponse> {
+    const result = await this.session.sendMessage(message);
+    return {
+      response: {
+        text: () => result.response.text(),
+      },
+    };
+  }
+}
+
+export class GeminiLLMService implements ILLMService {
   private readonly genAI: GoogleGenerativeAI;
 
   /**
@@ -49,16 +64,14 @@ export class LLMService {
   /**
    * Initializes a stateful chat session with the given system instruction.
    * @param systemInstruction The system prompt / context to guide the LLM behavior.
-   * @returns A ChatSession object that can be used to send messages and maintain history.
+   * @returns An IChatSession object that can be used to send messages and maintain history.
    */
-  public startChat(systemInstruction: string): ChatSession {
+  public startChat(systemInstruction: string): IChatSession {
     const model = this.genAI.getGenerativeModel({
       model: 'gemini-2.5-flash-lite',
       systemInstruction,
     });
 
-    return model.startChat();
+    return new GeminiChatSessionWrapper(model.startChat());
   }
 }
-
-export const llmServer = new LLMService();

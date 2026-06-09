@@ -85,20 +85,35 @@ export const SettingsForm: React.FC = () => {
 
   return (
     <div className="flex flex-col gap-6">
-      <div className="flex flex-col gap-2">
-        <label htmlFor="storage-provider" className="font-medium text-sm text-on-surface flex items-center gap-2">
+      <div className="flex flex-col gap-3">
+        <label className="font-medium text-sm text-on-surface flex items-center gap-2">
           <Database size={16} className="text-secondary" aria-hidden="true" />
           Storage Provider
         </label>
-        <select
-          id="storage-provider"
-          value={storageProvider}
-          onChange={(e) => setStorageProvider(e.target.value)}
-          className="min-h-[44px] border border-outline-variant rounded-md px-3 py-2 bg-surface-container-lowest text-on-surface outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-colors"
-        >
-          <option value="GITHUB">GitHub Repository (Obsidian)</option>
-          <option value="S3">Amazon S3</option>
-        </select>
+        <div className="flex items-center gap-6">
+          <label className="flex items-center gap-2 cursor-pointer">
+            <input
+              type="radio"
+              name="storage-provider"
+              value="GITHUB"
+              checked={storageProvider === 'GITHUB'}
+              onChange={(e) => setStorageProvider(e.target.value)}
+              className="text-primary focus:ring-primary h-4 w-4"
+            />
+            <span className="text-sm text-on-surface">GitHub Repository (Obsidian)</span>
+          </label>
+          <label className="flex items-center gap-2 cursor-pointer">
+            <input
+              type="radio"
+              name="storage-provider"
+              value="S3"
+              checked={storageProvider === 'S3'}
+              onChange={(e) => setStorageProvider(e.target.value)}
+              className="text-primary focus:ring-primary h-4 w-4"
+            />
+            <span className="text-sm text-on-surface">Amazon S3</span>
+          </label>
+        </div>
       </div>
 
       {storageProvider === 'GITHUB' && (

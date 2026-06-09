@@ -1,4 +1,4 @@
-import { llmServer } from './llm.service';
+import { llmServer } from './llm.factory';
 
 const CONTENT_PROCESSOR_PROMPT = `You are an expert technical writer, engineering mentor, and active recall specialist.
 Your task is to analyze the provided technical content (e.g., a video transcript) and produce a highly structured Markdown document.
