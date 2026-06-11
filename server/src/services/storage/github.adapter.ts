@@ -21,7 +21,7 @@ export class GitHubStorageAdapter implements StorageAdapter {
     const path = `${filename}`;
 
     const url = `https://api.github.com/repos/${repo}/contents/${path}`;
-    console.log(url)
+
     // Base64 encode the content for the GitHub API
     const base64Content = Buffer.from(content, 'utf-8').toString('base64');
 
@@ -130,7 +130,7 @@ export class GitHubStorageAdapter implements StorageAdapter {
 
   public async getNoteContent(repo: string, filename: string): Promise<string> {
     const url = `https://api.github.com/repos/${repo}/contents/${filename}`;
-    
+
     try {
       const response = await fetch(url, {
         method: 'GET',

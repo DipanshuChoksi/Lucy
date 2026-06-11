@@ -49,7 +49,7 @@ export class GeminiLLMService implements ILLMService {
           setTimeout(() => reject(new Error('LLM_TIMEOUT')), 30000)
         )
       ]);
-      const response = await result.response;
+      const response = result.response;
       return response.text();
     } catch (error) {
       if (error instanceof Error && error.message === 'LLM_TIMEOUT') {

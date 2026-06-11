@@ -1,5 +1,12 @@
 import { YoutubeTranscript } from 'youtube-transcript';
 
+export interface VideoMetadata {
+  title: string;
+  channelName: string;
+  channelUrl: string;
+  thumbnail: string;
+}
+
 export class YouTubeService {
   /**
    * Fetches the raw transcript objects for a given YouTube video.
@@ -25,6 +32,25 @@ export class YouTubeService {
     const transcript = await this.fetchTranscript(videoIdOrUrl);
     return transcript.map(chunk => chunk.text).join(' ');
   }
+
+  public async getVideoMetadata(url: string): Promise<VideoMetadata> {
+    const endpoint = `https://www.youtube.com/oembed?url=${encodeURIComponent(url)}&format=json`;
+
+    const response = await fetch(endpoint);
+
+    if (!response.ok) {
+      throw new Error('Failed to fetch video metadata');
+    }
+
+    const data = await response.json();
+    return {
+      title: data.title,
+      channelName: data.author_name,
+      channelUrl: data.author_url,
+      thumbnail: data.thumbnail_url,
+    };
+  }
+
 }
 
 export const youtubeService = new YouTubeService();

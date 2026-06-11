@@ -8,6 +8,10 @@ function NavbarMobile() {
     const pathname = usePathname();
     const [isOpen, setIsOpen] = useState(false);
 
+    if (pathname.startsWith('/reader/') && pathname !== '/reader') {
+        return null;
+    }
+
     const getLinkClasses = (path: string) => {
         const isActive = pathname === path || (path !== '/' && pathname.startsWith(path));
         return `font-label-md text-label-md transition-colors cursor-pointer block py-sm px-sm rounded-lg ${isActive

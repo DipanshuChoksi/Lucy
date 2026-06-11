@@ -30,12 +30,14 @@ export class YouTubeController {
       if (!transcriptText || transcriptText.trim().length === 0) {
         return res.status(422).json({ error: 'Could not extract transcript. Please verify captions are enabled on the video.' });
       }
-
       // 4. Process transcript into structured notes & flashcards via LLM
-      const { title, content: structuredNotes } = await contentService.processContent(transcriptText);
+      const structuredNotes = await contentService.processContent(transcriptText);
 
-      // We still include the videoId to ensure uniqueness, but we use the extracted title as well
-      const filename = `${title}-${videoId}.md`;
+      const metadata = await youtubeService.getVideoMetadata(youtubeLink);
+      const title = metadata.title;
+
+      // Strictly only use the title of the file same as the source video or content
+      const filename = `${title}.json`;
 
       // 5. Push the notes to the user's selected storage provider
       let storageAdapter: StorageAdapter;
