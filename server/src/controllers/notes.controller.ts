@@ -18,7 +18,8 @@ export class NotesController {
         include: {
           files: {
             where: q ? { title: { contains: q, mode: 'insensitive' } } : undefined,
-            orderBy: { createdAt: 'desc' }
+            orderBy: { createdAt: 'desc' },
+            include: { metadata: true }
           }
         }
       });

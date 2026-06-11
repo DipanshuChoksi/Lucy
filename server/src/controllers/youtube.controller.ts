@@ -76,7 +76,14 @@ export class YouTubeController {
           userId: userSettings.id,
           title: title,
           storageType: userSettings.settings?.storageProvider === 'S3' ? 'S3' : 'GITHUB',
-          filename: filename
+          filename: filename,
+          metadata: {
+            create: {
+              channelName: metadata.channelName,
+              channelUrl: metadata.channelUrl,
+              thumbnail: metadata.thumbnail
+            }
+          }
         }
       });
 
