@@ -1,14 +1,14 @@
+import 'dotenv/config';
 import express from 'express';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
+import passport from 'passport';
 import settingsRoutes from './routes/settings.routes';
 import youtubeRoutes from './routes/youtube.routes';
 import authRoutes from './routes/auth.routes';
 import notesRoutes from './routes/notes.routes';
 import { doubleCsrfProtection } from './middlewares/csrf.middleware';
-import dotenv from "dotenv"
 
-dotenv.config();
 
 const app = express();
 
@@ -23,6 +23,8 @@ app.use(cookieParser());
 // CSRF Protection for state-changing routes
 // Mount this before routes that need protection
 app.use(doubleCsrfProtection);
+
+app.use(passport.initialize());
 
 // Register API routes
 app.use('/api/auth', authRoutes);
