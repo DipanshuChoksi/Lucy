@@ -25,7 +25,7 @@ export default function NewNote() {
         },
         body: JSON.stringify({
           youtubeLink,
-          email: 'web-user@example.com',
+
         }),
       });
 

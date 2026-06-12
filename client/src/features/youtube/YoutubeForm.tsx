@@ -25,7 +25,6 @@ export const YoutubeForm: React.FC = () => {
         },
         body: JSON.stringify({
           youtubeLink,
-          email: 'web-user@example.com',
         }),
       });
 

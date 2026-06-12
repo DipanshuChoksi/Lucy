@@ -17,7 +17,7 @@ export default function NoteDetailPage() {
     if (!id) return;
     const fetchContent = async () => {
       try {
-        const response = await apiFetch(`/api/notes/content/${id}?email=web-user@example.com`);
+        const response = await apiFetch(`/api/notes/content/${id}`);
         if (response.ok) {
           const data = await response.json();
           let parsed = data.content;
@@ -75,7 +75,7 @@ export default function NoteDetailPage() {
                 })
               ) : (
                 <div className="prose prose-sm md:prose-lg prose-p:leading-snug prose-li:leading-snug md:prose-p:leading-relaxed md:prose-li:leading-relaxed dark:prose-invert max-w-none prose-headings:font-display prose-a:text-primary">
-                  <ReactMarkdown>{typeof noteContent === 'string' ? noteContent : 'Invalid content format'}</ReactMarkdown>
+                  <ReactMarkdown >{typeof noteContent === 'string' ? noteContent : 'Invalid content format'}</ReactMarkdown>
                 </div>
               )}
             </div>

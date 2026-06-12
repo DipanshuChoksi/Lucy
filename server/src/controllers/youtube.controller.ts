@@ -10,10 +10,15 @@ import { prisma } from '../lib/prisma';
 export class YouTubeController {
   async processVideo(req: Request, res: Response) {
     try {
-      const { youtubeLink, email } = req.body;
+      const { youtubeLink } = req.body;
+      const email = (req as any).user?.email;
 
       if (!youtubeLink) {
         return res.status(400).json({ error: 'youtubeLink is required' });
+      }
+
+      if (!email) {
+        return res.status(401).json({ error: 'Unauthorized' });
       }
 
       // 1. Fetch user settings to get Storage config

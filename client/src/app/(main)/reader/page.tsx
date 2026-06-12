@@ -20,7 +20,7 @@ export default function NoteReader() {
     const fetchNotes = async () => {
       setLoading(true);
       try {
-        const url = `/api/notes?email=web-user@example.com${searchQuery ? `&q=${encodeURIComponent(searchQuery)}` : ''}`;
+        const url = `/api/notes${searchQuery ? `?q=${encodeURIComponent(searchQuery)}` : ''}`;
         const response = await apiFetch(url);
         if (response.ok) {
           const data = await response.json();
@@ -47,7 +47,7 @@ export default function NoteReader() {
     
     setLoading(true);
     try {
-      const response = await apiFetch(`/api/notes/${id}?email=web-user@example.com`, { 
+      const response = await apiFetch(`/api/notes/${id}`, { 
         method: 'DELETE' 
       });
       if (response.ok) {

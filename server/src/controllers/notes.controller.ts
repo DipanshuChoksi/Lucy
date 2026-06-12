@@ -7,9 +7,9 @@ import { prisma } from '../lib/prisma';
 export class NotesController {
   async getNotesList(req: Request, res: Response) {
     try {
-      const email = req.query.email as string;
+      const email = (req as any).user?.email;
       if (!email) {
-        return res.status(400).json({ error: 'email is required' });
+        return res.status(401).json({ error: 'Unauthorized' });
       }
       const q = req.query.q as string;
 
@@ -38,11 +38,14 @@ export class NotesController {
 
   async getNoteContent(req: Request, res: Response) {
     try {
-      const email = req.query.email as string;
+      const email = (req as any).user?.email;
       const id = parseInt(req.params.id as string, 10);
 
-      if (!email || !id) {
-        return res.status(400).json({ error: 'email and id are required' });
+      if (!email) {
+        return res.status(401).json({ error: 'Unauthorized' });
+      }
+      if (!id) {
+        return res.status(400).json({ error: 'id is required' });
       }
 
       const user = await settingsService.getSettings(email);
@@ -90,11 +93,14 @@ export class NotesController {
 
   async deleteNote(req: Request, res: Response) {
     try {
-      const email = req.query.email as string;
+      const email = (req as any).user?.email;
       const id = parseInt(req.params.id as string, 10);
 
-      if (!email || !id) {
-        return res.status(400).json({ error: 'email and id are required' });
+      if (!email) {
+        return res.status(401).json({ error: 'Unauthorized' });
+      }
+      if (!id) {
+        return res.status(400).json({ error: 'id is required' });
       }
 
       const user = await settingsService.getSettings(email);
