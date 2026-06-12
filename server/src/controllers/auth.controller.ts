@@ -80,7 +80,7 @@ export const googleCallback = (req: Request, res: Response) => {
 }
 
 export const logout = (req: Request, res: Response) => {
-    res.clearCookie('__Secure-token');
+    res.clearCookie('auth_token');
     res.json({ message: 'Logged out' });
 }
 

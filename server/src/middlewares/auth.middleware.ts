@@ -11,7 +11,7 @@ export function getJwtSecret(): string {
 }
 
 export const authenticateToken = async (req: Request, res: Response, next: NextFunction) => {
-  const token = req.cookies['__Secure-token'];
+  const token = req.cookies['auth_token'];
   if (!token) return res.status(401).json({ error: 'Authentication required' });
 
   try {

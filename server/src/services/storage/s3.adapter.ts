@@ -1,4 +1,4 @@
-import { S3Client, PutObjectCommand, ListObjectsV2Command, GetObjectCommand } from '@aws-sdk/client-s3';
+import { S3Client, PutObjectCommand, ListObjectsV2Command, GetObjectCommand, DeleteObjectCommand } from '@aws-sdk/client-s3';
 import { StorageAdapter, NoteMetadata } from './storage.adapter';
 
 export class S3StorageAdapter implements StorageAdapter {
@@ -64,7 +64,7 @@ export class S3StorageAdapter implements StorageAdapter {
       });
 
       const response = await this.s3Client.send(command);
-      
+
       if (!response.Body) {
         throw new Error('S3 response body is empty');
       }
@@ -80,6 +80,20 @@ export class S3StorageAdapter implements StorageAdapter {
     } catch (error) {
       console.error('S3 Get Content Error:', error);
       throw new Error(`Failed to fetch note content from S3: ${(error as Error).message}`);
+    }
+  }
+
+  public async deleteNote(bucket: string, filename: string): Promise<void> {
+    try {
+      const command = new DeleteObjectCommand({
+        Bucket: bucket,
+        Key: filename,
+      });
+
+      await this.s3Client.send(command);
+    } catch (error) {
+      console.error('S3 Delete Error:', error);
+      throw new Error(`Failed to delete note from S3: ${(error as Error).message}`);
     }
   }
 }

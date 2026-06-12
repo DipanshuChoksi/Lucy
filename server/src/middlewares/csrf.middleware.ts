@@ -18,5 +18,5 @@ export const {
   size: 64, // The size of the generated tokens in bytes
   ignoredMethods: ["GET", "HEAD", "OPTIONS"], // A list of request methods that will not be protected.
   getCsrfTokenFromRequest: (req: Request) => req.headers["x-csrf-token"] as string, // How the token is retrieved from the request.
-  getSessionIdentifier: (req: Request) => req.cookies['__Secure-token'] || 'guest',
+  getSessionIdentifier: (req: Request) => req.cookies['auth_token'] || 'guest',
 });

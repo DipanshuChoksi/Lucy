@@ -40,6 +40,30 @@ export default function NoteReader() {
     return () => clearTimeout(timeoutId);
   }, [searchQuery]);
 
+  const handleDelete = async (e: React.MouseEvent, id: number) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (!window.confirm('Are you sure you want to delete this note?')) return;
+    
+    setLoading(true);
+    try {
+      const response = await apiFetch(`/api/notes/${id}?email=web-user@example.com`, { 
+        method: 'DELETE' 
+      });
+      if (response.ok) {
+        setNotes(prev => prev.filter(n => n.id !== id));
+      } else {
+        const data = await response.json().catch(() => ({}));
+        alert(data.error || 'Failed to delete note');
+      }
+    } catch (error) {
+      console.error('Error deleting note:', error);
+      alert('Error deleting note');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <main className="flex-1 flex flex-col md:ml-64 min-h-screen bg-background">
       <section className="w-full flex-col p-md bg-surface-container-lowest h-screen overflow-y-auto">
@@ -80,9 +104,18 @@ export default function NoteReader() {
                         {note.storageType === 'GITHUB' ? 'folder_data' : 'cloud'}
                       </span>
                     </div>
-                    <span className="font-label-sm text-[10px] tracking-wider uppercase px-2.5 py-1 rounded-full border transition-colors border-outline-variant text-on-surface-variant group-hover:border-primary/30 group-hover:text-primary">
-                      {note.storageType}
-                    </span>
+                    <div className="flex items-center gap-2">
+                      <span className="font-label-sm text-[10px] tracking-wider uppercase px-2.5 py-1 rounded-full border transition-colors border-outline-variant text-on-surface-variant group-hover:border-primary/30 group-hover:text-primary">
+                        {note.storageType}
+                      </span>
+                      <button
+                        onClick={(e) => handleDelete(e, note.id)}
+                        className="text-error/70 hover:text-error hover:bg-error/10 p-1.5 rounded-full transition-colors"
+                        title="Delete note"
+                      >
+                        <span className="material-symbols-outlined text-[18px]">delete</span>
+                      </button>
+                    </div>
                   </div>
                   <h3 className="font-headline-sm text-body-lg font-semibold leading-snug line-clamp-3" title={note.filename}>
                     {note.filename.replace(/\.md$/, '')}

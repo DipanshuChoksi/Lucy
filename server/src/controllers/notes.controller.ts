@@ -87,6 +87,59 @@ export class NotesController {
       });
     }
   }
+
+  async deleteNote(req: Request, res: Response) {
+    try {
+      const email = req.query.email as string;
+      const id = parseInt(req.params.id as string, 10);
+
+      if (!email || !id) {
+        return res.status(400).json({ error: 'email and id are required' });
+      }
+
+      const user = await settingsService.getSettings(email);
+      if (!user) {
+        return res.status(404).json({ error: 'User settings not found.' });
+      }
+
+      const file = await prisma.file.findUnique({ where: { id } });
+      if (!file || file.userId !== user.id) {
+        return res.status(404).json({ error: 'File not found.' });
+      }
+
+      const source = file.storageType;
+      const filename = file.filename;
+
+      if (source === 'GITHUB') {
+        if (!user.githubIntegration?.repoName || !user.githubIntegration?.encryptedToken) {
+          return res.status(400).json({ error: 'GitHub is not fully configured.' });
+        }
+        const githubAdapter = new GitHubStorageAdapter(user.githubIntegration.encryptedToken);
+        await githubAdapter.deleteNote(user.githubIntegration.repoName, filename);
+      } else if (source === 'S3') {
+        if (!user.s3Integration?.bucket || !user.s3Integration?.region || !user.s3Integration?.accessKeyId || !user.s3Integration?.secretAccessKey) {
+          return res.status(400).json({ error: 'S3 is not fully configured.' });
+        }
+        const s3Adapter = new S3StorageAdapter(
+          user.s3Integration.region,
+          user.s3Integration.accessKeyId,
+          user.s3Integration.secretAccessKey
+        );
+        await s3Adapter.deleteNote(user.s3Integration.bucket, filename);
+      } else {
+        return res.status(400).json({ error: 'Invalid source. Must be GITHUB or S3.' });
+      }
+
+      await prisma.file.delete({ where: { id } });
+
+      return res.json({ success: true, message: 'Note deleted successfully.' });
+    } catch (error: any) {
+      console.error('Error in NotesController.deleteNote:', error);
+      return res.status(500).json({
+        error: error.message || 'An error occurred while deleting note.',
+      });
+    }
+  }
 }
 
 export const notesController = new NotesController();

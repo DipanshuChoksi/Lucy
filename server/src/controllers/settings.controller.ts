@@ -4,9 +4,9 @@ import { settingsService } from '../services/settings.service';
 export class SettingsController {
   async getSettings(req: Request, res: Response) {
     try {
-      const email = req.query.email as string;
+      const email = (req as any).user?.email;
       if (!email) {
-        return res.status(400).json({ error: 'email is required' });
+        return res.status(401).json({ error: 'Unauthorized' });
       }
 
       const user = await settingsService.getSettings(email);
@@ -17,14 +17,14 @@ export class SettingsController {
       return res.json({
         id: user.id,
         email: user.email,
-        githubToken: user.githubIntegration?.encryptedToken ? '***' : null,
+        githubToken: user.githubIntegration?.encryptedToken || null,
         obsidianRepo: user.githubIntegration?.repoName,
         techStack: user.settings?.techStack,
         storageProvider: user.settings?.storageProvider,
         s3Bucket: user.s3Integration?.bucket,
         s3Region: user.s3Integration?.region,
-        s3AccessKeyId: user.s3Integration?.accessKeyId ? '***' : null,
-        s3SecretAccessKey: user.s3Integration?.secretAccessKey ? '***' : null,
+        s3AccessKeyId: user.s3Integration?.accessKeyId || null,
+        s3SecretAccessKey: user.s3Integration?.secretAccessKey || null,
       });
     } catch (error) {
       console.error('Error fetching settings:', error);
@@ -35,13 +35,12 @@ export class SettingsController {
   async updateSettings(req: Request, res: Response) {
     //TODO: Add validation when we have selected storage provider and that storage provider's information
     try {
-      let { email, githubToken, obsidianRepo, storageProvider, s3Bucket, s3Region, s3AccessKeyId, s3SecretAccessKey } = req.body;
-
+      const email = (req as any).user?.email;
       if (!email) {
-        return res.status(400).json({ error: 'email is required' });
+        return res.status(401).json({ error: 'Unauthorized' });
       }
 
-      email = String(email);
+      let { githubToken, obsidianRepo, storageProvider, s3Bucket, s3Region, s3AccessKeyId, s3SecretAccessKey } = req.body;
 
       const user = await settingsService.updateSettings(email, {
         githubToken,
@@ -56,14 +55,14 @@ export class SettingsController {
       return res.json({
         id: user.id,
         email: user.email,
-        githubToken: user.githubIntegration?.encryptedToken ? '***' : null,
+        githubToken: githubToken || user.githubIntegration?.encryptedToken || null,
         obsidianRepo: user.githubIntegration?.repoName,
         techStack: user.settings?.techStack,
         storageProvider: user.settings?.storageProvider,
         s3Bucket: user.s3Integration?.bucket,
         s3Region: user.s3Integration?.region,
-        s3AccessKeyId: user.s3Integration?.accessKeyId ? '***' : null,
-        s3SecretAccessKey: user.s3Integration?.secretAccessKey ? '***' : null,
+        s3AccessKeyId: s3AccessKeyId || user.s3Integration?.accessKeyId || null,
+        s3SecretAccessKey: s3SecretAccessKey || user.s3Integration?.secretAccessKey || null,
       });
     } catch (error) {
       console.error('Error updating settings:', error);

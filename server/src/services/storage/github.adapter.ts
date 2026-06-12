@@ -150,4 +150,46 @@ export class GitHubStorageAdapter implements StorageAdapter {
       throw error;
     }
   }
+
+  public async deleteNote(repo: string, filename: string): Promise<void> {
+    const url = `https://api.github.com/repos/${repo}/contents/${filename}`;
+    try {
+      // First get the file sha
+      const getResponse = await fetch(url, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${this.githubToken}`,
+          'Accept': 'application/vnd.github.v3+json',
+        },
+      });
+
+      if (!getResponse.ok) {
+        if (getResponse.status === 404) return; // Already deleted or doesn't exist
+        throw new Error(`Failed to get note sha before deletion: ${getResponse.statusText}`);
+      }
+
+      const fileData = await getResponse.json();
+      const sha = fileData.sha;
+
+      const response = await fetch(url, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${this.githubToken}`,
+          'Accept': 'application/vnd.github.v3+json',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          message: `Delete ${filename} via Lucy Assistant`,
+          sha,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Failed to delete note from GitHub: ${response.statusText}`);
+      }
+    } catch (error) {
+      console.error('Error deleting from GitHub:', error);
+      throw error;
+    }
+  }
 }

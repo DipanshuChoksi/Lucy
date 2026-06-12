@@ -20,7 +20,7 @@ export const SettingsForm: React.FC = () => {
   useEffect(() => {
     const fetchSettings = async () => {
       try {
-        const response = await apiFetch('/api/settings?email=web-user@example.com');
+        const response = await apiFetch('/api/settings');
         if (response.ok) {
           const data = await response.json();
           if (data) {
@@ -54,7 +54,6 @@ export const SettingsForm: React.FC = () => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          email: 'web-user@example.com',
           storageProvider,
           obsidianRepo,
           githubToken,
