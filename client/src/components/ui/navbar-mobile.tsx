@@ -29,10 +29,6 @@ function NavbarMobile() {
                     </button>
                     <h1 className="font-display text-headline-md font-bold text-primary">Lucy</h1>
                 </div>
-                <Link href="/new" className="bg-primary text-on-primary font-label-md text-label-md px-sm py-xs rounded-full whitespace-nowrap hover:opacity-90 transition-opacity flex items-center gap-xs">
-                    <span className="material-symbols-outlined text-[16px]">add</span>
-                    New
-                </Link>
             </div>
 
             {isOpen && (

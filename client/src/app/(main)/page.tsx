@@ -1,67 +1,97 @@
-import { LibraryCard, LibraryCardProps } from '../../components/ui/LibraryCard';
+'use client';
+import { apiFetch } from '@/src/lib/api';
+import { useState, useEffect } from 'react';
+import Link from 'next/link';
+import { YoutubeForm } from '@/src/features/youtube/YoutubeForm';
 
-const LIBRARY_ITEMS: LibraryCardProps[] = [
-  {
-    title: "The Future of Embodied Intelligence in Autonomous Systems",
-    description: "A comprehensive breakdown of how LLMs are being integrated into physical robotic frameworks to improve spatial awareness and dynamic problem solving in unpredictable environments.",
-    imageUrl: "https://lh3.googleusercontent.com/aida-public/AB6AXuBIPEL5en9PXFmfn1pETxU2Ix7Wg4ZTBdLI76HJ92f2afCPNOt76NrB-4sjLNaDMm6sZByA4nYpvLe4zhkDI-LWrMqxQetQroZVuwy-HOMBeLdoPU4xLW6EUmGYL-Pk0Ddt0MyIRP35b_XLoa-GoQFa4U67VwAdKyBY1tsKG_gB2Ss2p1wHvGXj83rwaCc70rgEjtfrhe8GpVSTJA7kZv5wnTXSeujH-Wk-M-oDcAQzGt7ib1p2YdAmmd6KLjvw0ygLPhSlRaKMkHhI",
-    imageAlt: "Robotics presentation",
-    duration: "14:20",
-    tags: ["AI & Robotics", "Lecture"],
-    dateAdded: "Oct 12",
-  },
-  {
-    title: "Neuroplasticity and Habit Formation: A Clinical View",
-    description: "Detailed analysis of dopamine pathways during the initial 30 days of routine building. Explores the physical changes in grey matter density related to conscious repetition.",
-    imageUrl: "https://lh3.googleusercontent.com/aida-public/AB6AXuCDatdPY_HAfM2PQ_snp0Oy7FXlHBGO0hum7RMdcwWQGcagQiae4HvSiH7Xj-oIxGECQc7VRkoqzv2rAD5jQlpCkr6hQWeCseJEoMaomz6e2x9zeWWTQIIC_Pv7TECZHNsk9yXe7sgT9V1g3HnLH_FoMjutOzOJJRiKh5LfAGgCNe_0beGVTTdMWp92R70t1XZyjGQp9JsBnffuZAPPRzDLyO1Y4SwKxFsAOx-6524IOdegj6Nw4byyNk-BDX_RgwkOZ3g4YFIBIaHY",
-    imageAlt: "Neuroscience scan",
-    duration: "45:10",
-    tags: ["Neuroscience"],
-    dateAdded: "Oct 10",
-  },
-  {
-    title: "Negative Space in Modern Japanese Architecture",
-    description: "An exploration of 'Ma' (the concept of negative space) and its application in contemporary urban dwelling designs to reduce cognitive load and promote tranquility.",
-    imageUrl: "https://lh3.googleusercontent.com/aida-public/AB6AXuBU4jRY_TA_A1HOTpDBdS7do0ghQ6EuUYmIsc2qJdEODd5A4ydk4Fi5raWg9llreQrfWokDbR0z5DAauzRrsj9JWqi0jwrGri-hFFB0FXMT-NnjI5spBkEbHo9Qh62tEuFeL6o8VfmLEZjFPTY4fSHtteyrdGkjdqEDMiOeyKuQK5I9b75deR0SDnONKTYpPGrHys3L6HoEvVFaKKhZz6Ux4-GxFlUz9BQdggdLH4uwjZQNsEsQsxfQ6clllMDBWMbNG_58LYnaYcVL",
-    imageAlt: "Minimalist architecture",
-    duration: "18:05",
-    tags: ["Design Theory", "Architecture"],
-    dateAdded: "Oct 08",
-  },
-  {
-    title: "Advanced Quantum Mechanics Lecture",
-    status: "processing",
-  }
-];
+interface NoteMetadata {
+  id: number;
+  filename: string;
+  storageType: 'GITHUB' | 'S3';
+  createdAt?: string;
+}
 
-export default function NotesLibrary() {
+export default function Dashboard() {
+  const [recentNotes, setRecentNotes] = useState<NoteMetadata[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchRecentNotes = async () => {
+      try {
+        const response = await apiFetch(`/api/notes`);
+        if (response.ok) {
+          const data = await response.json();
+          // Take the top 3 most recent notes
+          setRecentNotes((data.notes || []).slice(0, 3));
+        }
+      } catch (error) {
+        console.error('Failed to load recent notes', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchRecentNotes();
+  }, []);
   return (
     <main className="flex-1 md:ml-64 w-full">
       {/* Dashboard Header Area */}
       <div className="max-w-container-max mx-auto px-md md:px-lg py-xl">
+        {/* Quick Ingest Section */}
+        <div className="mb-xl">
+          <YoutubeForm />
+        </div>
+
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-xl gap-md">
           <div>
-            <h2 className="font-headline-lg text-headline-lg hidden md:block">My Library</h2>
-            <h2 className="font-headline-lg-mobile text-headline-lg-mobile md:hidden">My Library</h2>
-            <p className="font-body-md text-body-md text-secondary mt-2">12 saved video syntheses</p>
+            <h2 className="font-headline-lg text-headline-lg hidden md:block">Recent Notes</h2>
+            <h2 className="font-headline-lg-mobile text-headline-lg-mobile md:hidden">Recent Notes</h2>
+            <p className="font-body-md text-body-md text-secondary mt-2">Your latest processed knowledge</p>
           </div>
-          {/* Search and Filter */}
-          <div className="flex w-full md:w-auto gap-sm relative">
-            <div className="relative flex-1 md:w-64">
-              <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline">search</span>
-              <input className="w-full pl-10 pr-4 py-2 bg-surface-container-lowest border-b border-outline-variant focus:border-primary focus:outline-none focus:ring-0 font-body-md text-body-md transition-colors placeholder:text-outline-variant" placeholder="Search notes..." type="text" />
-            </div>
-            <button className="flex items-center justify-center p-2 border border-outline-variant rounded hover:bg-surface-container-lowest transition-colors">
-              <span className="material-symbols-outlined text-on-surface-variant">filter_list</span>
-            </button>
+          <Link href="/reader" className="text-primary hover:underline font-label-md flex items-center gap-1">
+            View All</Link>
+        </div>
+
+        {/* Recent Notes Grid */}
+        {loading ? (
+          <div className="text-center text-on-surface-variant py-xl font-body-md">Loading...</div>
+        ) : recentNotes.length === 0 ? (
+          <div className="text-center py-xl border border-dashed border-outline-variant rounded-xl mt-md">
+            <span className="material-symbols-outlined text-[32px] text-secondary mb-sm">note_stack</span>
+            <p className="text-on-surface-variant font-body-sm px-md">
+              No recent notes. Paste a YouTube link above to get started!
+            </p>
           </div>
-        </div>
-        {/* Library Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-md md:gap-lg">
-          {LIBRARY_ITEMS.map((item, index) => (
-            <LibraryCard key={index} {...item} />
-          ))}
-        </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-md md:gap-lg">
+            {recentNotes.map((note) => (
+              <Link
+                key={note.id}
+                href={`/reader/${note.id}`}
+                className="relative overflow-hidden border rounded-2xl p-lg cursor-pointer transition-all duration-300 ease-out flex flex-col justify-between min-h-[140px] group bg-surface hover:bg-surface-container-high border-outline-variant hover:border-primary/50 text-on-surface hover:-translate-y-1 hover:shadow-lg"
+              >
+                <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
+                <div className="relative z-10">
+                  <div className="flex justify-between items-center mb-md">
+                    <div className="w-10 h-10 rounded-xl flex items-center justify-center transition-colors bg-surface-container-high text-secondary group-hover:bg-primary/10 group-hover:text-primary">
+                      <span className="material-symbols-outlined text-[20px]">
+                        {note.storageType === 'GITHUB' ? 'folder_data' : 'cloud'}
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span className="font-label-sm text-[10px] tracking-wider uppercase px-2.5 py-1 rounded-full border transition-colors border-outline-variant text-on-surface-variant group-hover:border-primary/30 group-hover:text-primary">
+                        {note.storageType}
+                      </span>
+                    </div>
+                  </div>
+                  <h3 className="font-headline-sm text-body-lg font-semibold leading-snug line-clamp-3" title={note.filename}>
+                    {note.filename.replace(/\.md$/, '')}
+                  </h3>
+                </div>
+              </Link>
+            ))}
+          </div>
+        )}
       </div>
       {/* Footer */}
       <footer className="mt-auto border-t border-outline-variant dark:border-outline py-xl bg-background dark:bg-background">

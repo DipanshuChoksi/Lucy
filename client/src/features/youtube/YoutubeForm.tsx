@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import { Video, Loader2, CheckCircle2, PlaySquare } from 'lucide-react';
+import { apiFetch } from '@/src/lib/api';
 
 export const YoutubeForm: React.FC = () => {
   const [youtubeLink, setYoutubeLink] = useState('');
@@ -18,7 +19,7 @@ export const YoutubeForm: React.FC = () => {
     setSuccessMessage('');
 
     try {
-      const response = await fetch('/api/youtube/process', {
+      const response = await apiFetch('/api/youtube/process', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

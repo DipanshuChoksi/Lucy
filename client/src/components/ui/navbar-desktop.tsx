@@ -26,10 +26,6 @@ function NavbarDesktop() {
         <p className="font-label-sm text-label-sm text-secondary">Productive Calm</p>
       </div>
       <div className="flex-1 space-y-sm">
-        <Link className={getLinkClasses('/new')} href="/new">
-          <span className={getIconClasses('/new')} data-icon="add_circle">add_circle</span>
-          <span className="font-label-md text-label-md">New Note</span>
-        </Link>
         <Link className={getLinkClasses('/')} href="/">
           <span className={getIconClasses('/')} data-icon="library_books">library_books</span>
           <span className="font-label-md text-label-md">My Library</span>
