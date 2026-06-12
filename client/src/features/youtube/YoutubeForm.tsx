@@ -1,7 +1,7 @@
 'use client';
 
-import React, { useState } from 'react';
-import { Video, Loader2, CheckCircle2, PlaySquare } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Video, Loader2, CheckCircle2, PlaySquare, HardDrive, Cloud } from 'lucide-react';
 import { apiFetch } from '@/src/lib/api';
 
 export const YoutubeForm: React.FC = () => {
@@ -10,6 +10,8 @@ export const YoutubeForm: React.FC = () => {
   const [processSuccess, setProcessSuccess] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
+  const [storageProvider, setStorageProvider] = useState('GITHUB');
+
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -26,6 +28,7 @@ export const YoutubeForm: React.FC = () => {
         },
         body: JSON.stringify({
           youtubeLink,
+          storageProvider,
         }),
       });
 
@@ -39,7 +42,7 @@ export const YoutubeForm: React.FC = () => {
       setProcessSuccess(true);
       setSuccessMessage(data.message || 'Successfully processed video!');
       setYoutubeLink('');
-      
+
       // Clear success feedback after 5 seconds
       setTimeout(() => {
         setProcessSuccess(false);
@@ -59,9 +62,9 @@ export const YoutubeForm: React.FC = () => {
           <Video size={16} className="text-text-muted" aria-hidden="true" />
           YouTube Video Link
         </label>
-        <input 
+        <input
           id="youtube-link"
-          type="url" 
+          type="url"
           required
           value={youtubeLink}
           onChange={(e) => setYoutubeLink(e.target.value)}
@@ -81,12 +84,41 @@ export const YoutubeForm: React.FC = () => {
         <p id="youtube-hint" className="text-xs text-text-muted mt-1">Paste the full URL to extract transcript and summarize.</p>
       </div>
 
-      <button 
-        type="button" 
+      <div className="flex flex-col gap-3">
+        <span className="font-medium text-sm text-text-main">Storage Target</span>
+        <div className="flex gap-4">
+          <label className={`flex items-center gap-2 cursor-pointer p-3 border rounded-md transition-colors ${storageProvider === 'GITHUB' ? 'border-primary bg-primary/5 text-primary' : 'border-border-main text-text-muted hover:bg-bg-surface-hover'}`}>
+            <input
+              type="radio"
+              name="storageProvider"
+              value="GITHUB"
+              className="hidden"
+              checked={storageProvider === 'GITHUB'}
+              onChange={(e) => setStorageProvider(e.target.value)}
+            />
+            <HardDrive size={18} />
+            <span className="font-medium text-sm">GitHub</span>
+          </label>
+          <label className={`flex items-center gap-2 cursor-pointer p-3 border rounded-md transition-colors ${storageProvider === 'S3' ? 'border-primary bg-primary/5 text-primary' : 'border-border-main text-text-muted hover:bg-bg-surface-hover'}`}>
+            <input
+              type="radio"
+              name="storageProvider"
+              value="S3"
+              className="hidden"
+              checked={storageProvider === 'S3'}
+              onChange={(e) => setStorageProvider(e.target.value)}
+            />
+            <Cloud size={18} />
+            <span className="font-medium text-sm">AWS S3</span>
+          </label>
+        </div>
+      </div>
+
+      <button
+        type="button"
         onClick={handleSubmit as any}
-        className={`mt-4 flex items-center justify-center gap-2 text-bg-surface font-bold py-3 px-4 rounded-md cursor-pointer transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary disabled:cursor-not-allowed ${
-          processSuccess ? 'bg-green-600 hover:bg-green-700' : 'bg-primary hover:bg-secondary disabled:opacity-70'
-        }`}
+        className={`mt-4 flex items-center justify-center gap-2 text-bg-surface font-bold py-3 px-4 rounded-md cursor-pointer transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary disabled:cursor-not-allowed ${processSuccess ? 'bg-green-600 hover:bg-green-700' : 'bg-primary hover:bg-secondary disabled:opacity-70'
+          }`}
       >
         {isProcessing ? (
           <Loader2 size={18} className="animate-spin" aria-hidden="true" />

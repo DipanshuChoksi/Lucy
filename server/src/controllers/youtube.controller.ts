@@ -10,7 +10,7 @@ import { prisma } from '../lib/prisma';
 export class YouTubeController {
   async processVideo(req: Request, res: Response) {
     try {
-      const { youtubeLink } = req.body;
+      const { youtubeLink, storageProvider } = req.body;
       const email = (req as any).user?.email;
 
       if (!youtubeLink) {
@@ -28,7 +28,7 @@ export class YouTubeController {
       }
 
       // 2. Extract video ID for naming the file uniquely
-      const videoId = YouTubeController.extractVideoId(youtubeLink);
+      // const videoId = YouTubeController.extractVideoId(youtubeLink);
 
       // 3. Extract transcript
       const transcriptText = await youtubeService.extractText(youtubeLink);
@@ -47,8 +47,9 @@ export class YouTubeController {
       // 5. Push the notes to the user's selected storage provider
       let storageAdapter: StorageAdapter;
       let target: string;
+      const targetStorageProvider = storageProvider || userSettings.settings?.storageProvider || 'GITHUB';
 
-      if (userSettings.settings?.storageProvider === 'S3') {
+      if (targetStorageProvider === 'S3') {
         if (!userSettings.s3Integration?.bucket || !userSettings.s3Integration?.region || !userSettings.s3Integration?.accessKeyId || !userSettings.s3Integration?.secretAccessKey) {
           return res.status(400).json({
             error: 'S3 storage is not fully configured in settings.'
@@ -80,7 +81,7 @@ export class YouTubeController {
         data: {
           userId: userSettings.id,
           title: title,
-          storageType: userSettings.settings?.storageProvider === 'S3' ? 'S3' : 'GITHUB',
+          storageType: targetStorageProvider === 'S3' ? 'S3' : 'GITHUB',
           filename: filename,
           metadata: {
             create: {

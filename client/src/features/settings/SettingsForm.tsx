@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { FolderGit2, Save, Loader2, CheckCircle2, Database, Key, Server } from 'lucide-react';
+import { FolderGit2, Save, Loader2, CheckCircle2, Database, Key, Server, Eye, EyeOff } from 'lucide-react';
 import { apiFetch } from '@/src/lib/api';
 
 export const SettingsForm: React.FC = () => {
@@ -16,6 +16,9 @@ export const SettingsForm: React.FC = () => {
   const [saveSuccess, setSaveSuccess] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
+  const [showGithubToken, setShowGithubToken] = useState(false);
+  const [showS3AccessKeyId, setShowS3AccessKeyId] = useState(false);
+  const [showS3SecretAccessKey, setShowS3SecretAccessKey] = useState(false);
 
   useEffect(() => {
     const fetchSettings = async () => {
@@ -140,14 +143,24 @@ export const SettingsForm: React.FC = () => {
               <Key size={16} className="text-secondary" aria-hidden="true" />
               GitHub Personal Access Token (PAT)
             </label>
-            <input
-              id="github-token"
-              type="password"
-              value={githubToken}
-              onChange={(e) => setGithubToken(e.target.value)}
-              className="min-h-[44px] border border-outline-variant rounded-md px-3 py-2 bg-surface-container-lowest text-on-surface outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-colors"
-              placeholder="ghp_xxxxxxxxxxxx"
-            />
+            <div className="relative flex items-center w-full">
+              <input
+                id="github-token"
+                type={showGithubToken ? "text" : "password"}
+                value={githubToken}
+                onChange={(e) => setGithubToken(e.target.value)}
+                className="w-full min-h-[44px] border border-outline-variant rounded-md px-3 py-2 pr-10 bg-surface-container-lowest text-on-surface outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-colors"
+                placeholder="ghp_xxxxxxxxxxxx"
+              />
+              <button
+                type="button"
+                onClick={() => setShowGithubToken(!showGithubToken)}
+                className="absolute right-3 text-secondary hover:text-on-surface focus:outline-none"
+                aria-label={showGithubToken ? "Hide token" : "Show token"}
+              >
+                {showGithubToken ? <EyeOff size={18} /> : <Eye size={18} />}
+              </button>
+            </div>
           </div>
         </div>
       )}
@@ -187,28 +200,48 @@ export const SettingsForm: React.FC = () => {
               <Key size={16} className="text-secondary" aria-hidden="true" />
               Access Key ID
             </label>
-            <input
-              id="s3-access-key"
-              type="text"
-              value={s3AccessKeyId}
-              onChange={(e) => setS3AccessKeyId(e.target.value)}
-              className="min-h-[44px] border border-outline-variant rounded-md px-3 py-2 bg-surface-container-lowest text-on-surface outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-colors"
-              placeholder="AKIAIOSFODNN7EXAMPLE"
-            />
+            <div className="relative flex items-center w-full">
+              <input
+                id="s3-access-key"
+                type={showS3AccessKeyId ? "text" : "password"}
+                value={s3AccessKeyId}
+                onChange={(e) => setS3AccessKeyId(e.target.value)}
+                className="w-full min-h-[44px] border border-outline-variant rounded-md px-3 py-2 pr-10 bg-surface-container-lowest text-on-surface outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-colors"
+                placeholder="AKIAIOSFODNN7EXAMPLE"
+              />
+              <button
+                type="button"
+                onClick={() => setShowS3AccessKeyId(!showS3AccessKeyId)}
+                className="absolute right-3 text-secondary hover:text-on-surface focus:outline-none"
+                aria-label={showS3AccessKeyId ? "Hide access key" : "Show access key"}
+              >
+                {showS3AccessKeyId ? <EyeOff size={18} /> : <Eye size={18} />}
+              </button>
+            </div>
           </div>
           <div className="flex flex-col gap-2">
             <label htmlFor="s3-secret-key" className="font-medium text-sm text-on-surface flex items-center gap-2">
               <Key size={16} className="text-secondary" aria-hidden="true" />
               Secret Access Key
             </label>
-            <input
-              id="s3-secret-key"
-              type="password"
-              value={s3SecretAccessKey}
-              onChange={(e) => setS3SecretAccessKey(e.target.value)}
-              className="min-h-[44px] border border-outline-variant rounded-md px-3 py-2 bg-surface-container-lowest text-on-surface outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-colors"
-              placeholder="wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"
-            />
+            <div className="relative flex items-center w-full">
+              <input
+                id="s3-secret-key"
+                type={showS3SecretAccessKey ? "text" : "password"}
+                value={s3SecretAccessKey}
+                onChange={(e) => setS3SecretAccessKey(e.target.value)}
+                className="w-full min-h-[44px] border border-outline-variant rounded-md px-3 py-2 pr-10 bg-surface-container-lowest text-on-surface outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-colors"
+                placeholder="wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"
+              />
+              <button
+                type="button"
+                onClick={() => setShowS3SecretAccessKey(!showS3SecretAccessKey)}
+                className="absolute right-3 text-secondary hover:text-on-surface focus:outline-none"
+                aria-label={showS3SecretAccessKey ? "Hide secret key" : "Show secret key"}
+              >
+                {showS3SecretAccessKey ? <EyeOff size={18} /> : <Eye size={18} />}
+              </button>
+            </div>
           </div>
         </div>
       )}
