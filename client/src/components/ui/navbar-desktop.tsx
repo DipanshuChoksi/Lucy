@@ -2,15 +2,17 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { useUser } from '@/src/context/UserContext';
 
 function NavbarDesktop() {
   const pathname = usePathname();
+  const { logout } = useUser();
 
   const getLinkClasses = (path: string) => {
     const isActive = pathname === path || (path !== '/' && pathname.startsWith(path));
     return `flex items-center gap-md px-md py-xs transition-all rounded-xl cursor-pointer ${isActive
-        ? 'bg-secondary-container text-on-secondary-container opacity-100 scale-100 font-bold'
-        : 'text-on-surface-variant hover:bg-surface-container-highest active:scale-95'
+      ? 'bg-secondary-container text-on-secondary-container opacity-100 scale-100 font-bold'
+      : 'text-on-surface-variant hover:bg-surface-container-highest active:scale-95'
       }`;
   };
 
@@ -42,6 +44,15 @@ function NavbarDesktop() {
           <span className={getIconClasses('/settings')} data-icon="settings">settings</span>
           <span className="font-label-md text-label-md">Settings</span>
         </Link>
+      </div>
+      <div className="mt-auto">
+        <button
+          onClick={logout}
+          className="flex items-center gap-md px-md py-xs w-full text-left transition-all rounded-xl cursor-pointer text-on-surface-variant hover:bg-surface-container-highest active:scale-95"
+        >
+          <span className="material-symbols-outlined" data-icon="logout">logout</span>
+          <span className="font-label-md text-label-md">Logout</span>
+        </button>
       </div>
     </nav>
   )

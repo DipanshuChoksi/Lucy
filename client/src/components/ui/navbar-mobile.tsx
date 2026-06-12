@@ -3,10 +3,12 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useState } from 'react';
+import { useUser } from '@/src/context/UserContext';
 
 function NavbarMobile() {
     const pathname = usePathname();
     const [isOpen, setIsOpen] = useState(false);
+    const { logout } = useUser();
 
     if (pathname.startsWith('/reader/') && pathname !== '/reader') {
         return null;
@@ -15,8 +17,8 @@ function NavbarMobile() {
     const getLinkClasses = (path: string) => {
         const isActive = pathname === path || (path !== '/' && pathname.startsWith(path));
         return `font-label-md text-label-md transition-colors cursor-pointer block py-sm px-sm rounded-lg ${isActive
-                ? 'bg-secondary-container text-on-secondary-container font-bold'
-                : 'text-on-surface-variant hover:bg-surface-container-highest'
+            ? 'bg-secondary-container text-on-secondary-container font-bold'
+            : 'text-on-surface-variant hover:bg-surface-container-highest'
             }`;
     };
 
@@ -57,6 +59,15 @@ function NavbarMobile() {
                             Settings
                         </div>
                     </Link>
+                    <div className="mt-2 border-t border-outline-variant pt-2">
+                        <button
+                            onClick={() => { setIsOpen(false); logout(); }}
+                            className="font-label-md text-label-md transition-colors cursor-pointer w-full text-left flex items-center gap-sm py-sm px-sm rounded-lg text-on-surface-variant hover:bg-surface-container-highest"
+                        >
+                            <span className="material-symbols-outlined text-[20px]">logout</span>
+                            Logout
+                        </button>
+                    </div>
                 </div>
             )}
         </header>
