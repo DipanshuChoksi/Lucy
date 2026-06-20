@@ -10,4 +10,5 @@ export interface StorageAdapter {
   listNotes(target: string): Promise<NoteMetadata[]>;
   getNoteContent(target: string, filename: string): Promise<string>;
   deleteNote(target: string, filename: string): Promise<void>;
+  renameNote(target: string, oldFilename: string, newFilename: string): Promise<void>;
 }

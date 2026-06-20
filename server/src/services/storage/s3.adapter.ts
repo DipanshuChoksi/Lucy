@@ -1,4 +1,4 @@
-import { S3Client, PutObjectCommand, ListObjectsV2Command, GetObjectCommand, DeleteObjectCommand } from '@aws-sdk/client-s3';
+import { S3Client, PutObjectCommand, ListObjectsV2Command, GetObjectCommand, DeleteObjectCommand, CopyObjectCommand } from '@aws-sdk/client-s3';
 import { StorageAdapter, NoteMetadata } from './storage.adapter';
 
 export class S3StorageAdapter implements StorageAdapter {
@@ -94,6 +94,26 @@ export class S3StorageAdapter implements StorageAdapter {
     } catch (error) {
       console.error('S3 Delete Error:', error);
       throw new Error(`Failed to delete note from S3: ${(error as Error).message}`);
+    }
+  }
+
+  public async renameNote(bucket: string, oldFilename: string, newFilename: string): Promise<void> {
+    try {
+      const copyCommand = new CopyObjectCommand({
+        Bucket: bucket,
+        CopySource: `${bucket}/${encodeURIComponent(oldFilename)}`,
+        Key: newFilename,
+      });
+      await this.s3Client.send(copyCommand);
+
+      const deleteCommand = new DeleteObjectCommand({
+        Bucket: bucket,
+        Key: oldFilename,
+      });
+      await this.s3Client.send(deleteCommand);
+    } catch (error) {
+      console.error('S3 Rename Error:', error);
+      throw new Error(`Failed to rename note in S3: ${(error as Error).message}`);
     }
   }
 }

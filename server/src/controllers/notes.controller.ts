@@ -146,6 +146,76 @@ export class NotesController {
       });
     }
   }
+
+  async renameNote(req: Request, res: Response) {
+    try {
+      const email = (req as any).user?.email;
+      const id = parseInt(req.params.id as string, 10);
+      let { newFilename } = req.body;
+
+      if (!email) {
+        return res.status(401).json({ error: 'Unauthorized' });
+      }
+      if (!id) {
+        return res.status(400).json({ error: 'id is required' });
+      }
+      if (!newFilename) {
+        return res.status(400).json({ error: 'newFilename is required' });
+      }
+
+      if (!newFilename.endsWith('.md')) {
+        newFilename += '.md';
+      }
+
+      const user = await settingsService.getSettings(email);
+      if (!user) {
+        return res.status(404).json({ error: 'User settings not found.' });
+      }
+
+      const file = await prisma.file.findUnique({ where: { id } });
+      if (!file || file.userId !== user.id) {
+        return res.status(404).json({ error: 'File not found.' });
+      }
+
+      const source = file.storageType;
+      const oldFilename = file.filename;
+
+      if (source === 'GITHUB') {
+        if (!user.githubIntegration?.repoName || !user.githubIntegration?.encryptedToken) {
+          return res.status(400).json({ error: 'GitHub is not fully configured.' });
+        }
+        const githubAdapter = new GitHubStorageAdapter(user.githubIntegration.encryptedToken);
+        await githubAdapter.renameNote(user.githubIntegration.repoName, oldFilename, newFilename);
+      } else if (source === 'S3') {
+        if (!user.s3Integration?.bucket || !user.s3Integration?.region || !user.s3Integration?.accessKeyId || !user.s3Integration?.secretAccessKey) {
+          return res.status(400).json({ error: 'S3 is not fully configured.' });
+        }
+        const s3Adapter = new S3StorageAdapter(
+          user.s3Integration.region,
+          user.s3Integration.accessKeyId,
+          user.s3Integration.secretAccessKey
+        );
+        await s3Adapter.renameNote(user.s3Integration.bucket, oldFilename, newFilename);
+      } else {
+        return res.status(400).json({ error: 'Invalid source. Must be GITHUB or S3.' });
+      }
+
+      const updatedFile = await prisma.file.update({
+        where: { id },
+        data: {
+          filename: newFilename,
+          title: newFilename.replace(/\.md$/, ''),
+        },
+      });
+
+      return res.json({ success: true, message: 'Note renamed successfully.', file: updatedFile });
+    } catch (error: any) {
+      console.error('Error in NotesController.renameNote:', error);
+      return res.status(500).json({
+        error: error.message || 'An error occurred while renaming note.',
+      });
+    }
+  }
 }
 
 export const notesController = new NotesController();

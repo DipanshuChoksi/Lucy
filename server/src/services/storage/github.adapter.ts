@@ -192,4 +192,15 @@ export class GitHubStorageAdapter implements StorageAdapter {
       throw error;
     }
   }
+
+  public async renameNote(repo: string, oldFilename: string, newFilename: string): Promise<void> {
+    try {
+      const content = await this.getNoteContent(repo, oldFilename);
+      await this.pushToRepository(repo, newFilename, content);
+      await this.deleteNote(repo, oldFilename);
+    } catch (error) {
+      console.error('Error renaming note in GitHub:', error);
+      throw error;
+    }
+  }
 }

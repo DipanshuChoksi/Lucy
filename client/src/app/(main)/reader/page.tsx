@@ -64,6 +64,36 @@ export default function NoteReader() {
     }
   };
 
+  const handleRename = async (e: React.MouseEvent, id: number, currentFilename: string) => {
+    e.preventDefault();
+    e.stopPropagation();
+    const currentName = currentFilename.replace(/\.md$/, '');
+    const newName = window.prompt('Enter new note name:', currentName);
+    
+    if (!newName || newName === currentName) return;
+    
+    setLoading(true);
+    try {
+      const response = await apiFetch(`/api/notes/${id}/rename`, { 
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ newFilename: newName })
+      });
+      if (response.ok) {
+        const data = await response.json();
+        setNotes(prev => prev.map(n => n.id === id ? { ...n, filename: data.file.filename } : n));
+      } else {
+        const data = await response.json().catch(() => ({}));
+        alert(data.error || 'Failed to rename note');
+      }
+    } catch (error) {
+      console.error('Error renaming note:', error);
+      alert('Error renaming note');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <main className="flex-1 flex flex-col md:ml-64 min-h-screen bg-background">
       <section className="w-full flex-col p-md bg-surface-container-lowest h-screen overflow-y-auto">
@@ -108,6 +138,13 @@ export default function NoteReader() {
                       <span className="font-label-sm text-[10px] tracking-wider uppercase px-2.5 py-1 rounded-full border transition-colors border-outline-variant text-on-surface-variant group-hover:border-primary/30 group-hover:text-primary">
                         {note.storageType}
                       </span>
+                      <button
+                        onClick={(e) => handleRename(e, note.id, note.filename)}
+                        className="text-primary/70 hover:text-primary hover:bg-primary/10 p-1.5 rounded-full transition-colors"
+                        title="Rename note"
+                      >
+                        <span className="material-symbols-outlined text-[18px]">edit</span>
+                      </button>
                       <button
                         onClick={(e) => handleDelete(e, note.id)}
                         className="text-error/70 hover:text-error hover:bg-error/10 p-1.5 rounded-full transition-colors"

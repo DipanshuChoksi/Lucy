@@ -14,4 +14,7 @@ router.get('/notes/content/:id', authenticateToken, doubleCsrfProtection, notesC
 // Endpoint to delete a specific note. Using a DELETE request.
 router.delete('/notes/:id', authenticateToken, doubleCsrfProtection, notesController.deleteNote);
 
+// Endpoint to rename a specific note. Using a PUT request.
+router.put('/notes/:id/rename', authenticateToken, doubleCsrfProtection, notesController.renameNote);
+
 export default router;
